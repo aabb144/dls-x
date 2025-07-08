@@ -185,6 +185,10 @@
           matches.forEach((match, idx) => {
             let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
 
+            // Update the "played" count for both teams
+            updatePlayedInPointTable(match.team1);
+            updatePlayedInPointTable(match.team2);
+
             html += `
               <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
                 <div class="text-center text-[13px] text-gray-500 font-semibold">Match ${idx + 1} - ${displayDate}</div>
@@ -307,6 +311,26 @@
       }
     }
 
+    async function updatePlayedInPointTable(team) {
+      const snapshot = await getDocs(collection(db, "pointTables"));
+      let teamUpdated = false;
+
+      for (const docSnap of snapshot.docs) {
+        const data = docSnap.data();
+        const groupTeams = data.teams;
+
+        for (let i = 0; i < groupTeams.length; i++) {
+          if (groupTeams[i].team === team) {
+            groupTeams[i].played += 1;  // Increment played
+            await updateDoc(doc(db, "pointTables", docSnap.id), { teams: groupTeams });
+            teamUpdated = true;
+          }
+        }
+
+        if (teamUpdated) break;
+      }
+    }
+
     document.getElementById("addFixerBtn").addEventListener("click", async () => {
       const selectedTeams = Array.from(document.getElementById("teamSelector").selectedOptions).map(opt => opt.value);
       const baseDate = document.getElementById("fixerDate").value;
@@ -384,7 +408,6 @@
       for (let option of options) option.selected = e.target.checked;
     });
 
-    // Updated deleteAllBtn click handler
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
       const confirm = await Swal.fire({
         title: 'Are you sure?',
