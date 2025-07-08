@@ -116,12 +116,6 @@
       document.getElementById("teamSelector").innerHTML = teamList.map(t => `<option value="${t}">${t}</option>`).join("");
     }
 
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
-    }
-
     async function loadFixers() {
       const fixersContainer = document.getElementById("fixersContainer");
       onSnapshot(collection(db, "fixers"), (snapshot) => {
