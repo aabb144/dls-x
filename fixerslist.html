@@ -146,14 +146,19 @@
         data.status = status;
       }
 
+      let winner = "None";
       if (status === "Finished" && !data.pointsUpdated) {
         const team1Points = g1 > g2 ? 3 : (g1 === g2 ? 1 : 0);
         const team2Points = g2 > g1 ? 3 : (g1 === g2 ? 1 : 0);
 
+        if (team1Points > team2Points) winner = data.team1;
+        else if (team2Points > team1Points) winner = data.team2;
+        else winner = "Draw";
+
         await updatePointsInFirestore(data.team1, team1Points, g1, g2);
         await updatePointsInFirestore(data.team2, team2Points, g2, g1);
 
-        await updateDoc(docRef, { pointsUpdated: true });
+        await updateDoc(docRef, { pointsUpdated: true, winner: winner });
       }
 
       fixers.push(data);
@@ -179,12 +184,6 @@
 
       matches.forEach((match, idx) => {
         let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
-        let winner = "None";
-        if (typeof match.team1Goal === "number" && typeof match.team2Goal === "number") {
-          if (match.team1Goal > match.team2Goal) winner = match.team1;
-          else if (match.team2Goal > match.team1Goal) winner = match.team2;
-          else winner = "Draw";
-        }
 
         html += `
           <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
@@ -194,7 +193,7 @@
                 <div class="text-base font-bold text-red-500">VS</div>
                 <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
               </div>
-              <div class="text-center text-green-600 text-xs font-medium">Winner: ${winner}</div>
+              <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
               <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
           </div>`;
       });
@@ -346,7 +345,8 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
-            groupName: groupName
+            groupName: groupName,
+            winner: "None"  // Added winner field here
           });
           added++;
         }
