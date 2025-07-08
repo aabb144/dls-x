@@ -187,7 +187,7 @@
 
             html += `
               <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
-                <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
+                <div class="text-center text-[13px] text-gray-500 font-semibold">Match ${idx + 1} - ${displayDate}</div>
                 <div class="flex justify-between items-center px-2">
                   <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
                   <div class="text-base font-bold text-red-500">VS</div>
@@ -282,7 +282,6 @@
 
         for (let i = 0; i < groupTeams.length; i++) {
           if (groupTeams[i].team === team) {
-            // Update played only if match is finished
             if (points > 0) groupTeams[i].played += 1;
             groupTeams[i].goals += goalsFor;
 
@@ -294,8 +293,7 @@
               groupTeams[i].loss += 1;
             }
 
-            groupTeams[i].points += points; // Update points
-
+            groupTeams[i].points += points;
             await updateDoc(doc(db, "pointTables", docSnap.id), { teams: groupTeams });
             teamUpdated = true;
           }
