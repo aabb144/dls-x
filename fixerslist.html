@@ -117,62 +117,67 @@
       document.getElementById("teamSelector").innerHTML = teamList.map(t => `<option value="${t}">${t}</option>`).join("");
     }
 
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
+    }
+
     async function loadFixers() {
-      const snapshot = await getDocs(collection(db, "fixers"));
       const fixersContainer = document.getElementById("fixersContainer");
+      const query = collection(db, "fixers");
 
-      if (snapshot.empty) {
-        fixersContainer.innerHTML = `<p class="text-gray-500 text-center">No fixers found.</p>`;
-        return;
-      }
-
-      const fixers = [];
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const docRef = doc(db, "fixers", docSnap.id);
-
-        const g1 = data.team1Goal;
-        const g2 = data.team2Goal;
-        let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
-        
-        if (data.status !== status) {
-          updateDoc(docRef, { status });
+      // Listen to real-time updates for fixers collection
+      onSnapshot(query, (snapshot) => {
+        if (snapshot.empty) {
+          fixersContainer.innerHTML = `<p class="text-gray-500 text-center">No fixers found.</p>`;
+          return;
         }
 
-        let winner = "None";
-        if (status === "Finished" && !data.pointsUpdated) {
-          const team1Points = g1 > g2 ? 3 : (g1 === g2 ? 1 : 0);
-          const team2Points = g2 > g1 ? 3 : (g1 === g2 ? 1 : 0);
+        let html = "";
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const docRef = doc(db, "fixers", docSnap.id);
 
-          if (team1Points > team2Points) winner = data.team1;
-          else if (team2Points > team1Points) winner = data.team2;
-          else winner = "Draw";
+          const g1 = data.team1Goal;
+          const g2 = data.team2Goal;
+          let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
 
-          updatePointsInFirestore(data.team1, team1Points, g1, g2);
-          updatePointsInFirestore(data.team2, team2Points, g2, g1);
+          if (data.status !== status) {
+            updateDoc(docRef, { status });
+            data.status = status;
+          }
 
-          updateDoc(docRef, { pointsUpdated: true, winner: winner });
-        }
+          let winner = "None";
+          if (status === "Finished" && !data.pointsUpdated) {
+            const team1Points = g1 > g2 ? 3 : (g1 === g2 ? 1 : 0);
+            const team2Points = g2 > g1 ? 3 : (g1 === g2 ? 1 : 0);
 
-        fixers.push(data);
+            if (team1Points > team2Points) winner = data.team1;
+            else if (team2Points > team1Points) winner = data.team2;
+            else winner = "Draw";
+
+            updatePointsInFirestore(data.team1, team1Points, g1, g2);
+            updatePointsInFirestore(data.team2, team2Points, g2, g1);
+
+            updateDoc(docRef, { pointsUpdated: true, winner: winner });
+          }
+
+          html += `
+            <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
+              <div class="text-center text-[13px] text-gray-500 font-semibold">${data.date}</div>
+              <div class="flex justify-between items-center px-2">
+                <div class="text-sm font-semibold text-gray-600">${data.team1} <span class="text-black">(${data.team1Goal ?? "-"})</span></div>
+                <div class="text-base font-bold text-red-500">VS</div>
+                <div class="text-sm font-semibold text-gray-600">${data.team2} <span class="text-black">(${data.team2Goal ?? "-"})</span></div>
+              </div>
+              <div class="text-center text-green-600 text-xs font-medium">Winner: ${winner}</div>
+              <div class="text-center text-blue-600 text-xs font-medium">Status: ${status}</div>
+            </div>`;
+        });
+
+        fixersContainer.innerHTML = html;
       });
-
-      let html = "";
-      fixers.forEach((match, idx) => {
-        html += `
-          <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
-            <div class="text-center text-[13px] text-gray-500 font-semibold">${match.date}</div>
-            <div class="flex justify-between items-center px-2">
-              <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
-              <div class="text-base font-bold text-red-500">VS</div>
-              <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
-            </div>
-            <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
-            <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
-          </div>`;
-      });
-
-      fixersContainer.innerHTML = html;
     }
 
     async function loadPointTables() {
@@ -188,50 +193,56 @@
       snapshot.forEach(doc => pointTables.push(doc.data()));
 
       let allPointsHTML = "";
-      pointTables.sort((a, b) => a.groupName.localeCompare(b.groupName));
+      pointTables.sort((a, b) => {
+        const groupA = a.groupName || '';
+        const groupB = b.groupName || '';
+        return groupA.localeCompare(groupB);
+      });
 
-      pointTables.forEach((pointTable, index) => {
+      allPointsHTML = pointTables.map((pointTable, index) => {
         const groupNameFromFirestore = pointTable.groupName || `Group ${String.fromCharCode(65 + index)}`;
 
         pointTable.teams.sort((a, b) => {
-          if (b.points === a.points) return b.goals - a.goals;
+          if (b.points === a.points) {
+            return b.goals - a.goals;
+          }
           return b.points - a.points;
         });
 
-        allPointsHTML += `
+        return `
           <div class="mb-4">
-            <div class="font-semibold mb-1 text-blue-700">Point Table - ${groupNameFromFirestore}</div>
-            <table class="text-sm w-full table-auto border border-gray-200">
-              <thead>
-                <tr class="bg-gray-200">
-                  <th class="px-2 py-1 border">#</th>
-                  <th class="px-2 py-1 border">Team</th>
-                  <th class="px-2 py-1 border text-center">Played</th>
-                  <th class="px-2 py-1 border text-center">Win</th>
-                  <th class="px-2 py-1 border text-center">Loss</th>
-                  <th class="px-2 py-1 border text-center">Draw</th>
-                  <th class="px-2 py-1 border text-center">Goals</th>
-                  <th class="px-2 py-1 border text-center">Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${pointTable.teams.map((team, i) => `
-                  <tr>
-                    <td class="px-2 py-1 border text-center">${i + 1}</td>
-                    <td class="px-2 py-1 border">${team.team}</td>
-                    <td class="px-2 py-1 border text-center font-semibold">${team.played}</td>
-                    <td class="px-2 py-1 border text-center">${team.win}</td>
-                    <td class="px-2 py-1 border text-center">${team.loss}</td>
-                    <td class="px-2 py-1 border text-center">${team.draw}</td>
-                    <td class="px-2 py-1 border text-center font-semibold">${team.goals}</td>
-                    <td class="px-2 py-1 border text-center font-bold">${team.points}</td>
+              <div class="font-semibold mb-1 text-blue-700">Point Table - ${groupNameFromFirestore}</div>
+              <table class="text-sm w-full table-auto border border-gray-200">
+                <thead>
+                  <tr class="bg-gray-200">
+                    <th class="px-2 py-1 border">#</th>
+                    <th class="px-2 py-1 border">Team</th>
+                    <th class="px-2 py-1 border text-center">Played</th>
+                    <th class="px-2 py-1 border text-center">Win</th>
+                    <th class="px-2 py-1 border text-center">Loss</th>
+                    <th class="px-2 py-1 border text-center">Draw</th>
+                    <th class="px-2 py-1 border text-center">Goals</th>
+                    <th class="px-2 py-1 border text-center">Points</th>
                   </tr>
-                `).join('')}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  ${pointTable.teams.map((team, i) => `
+                    <tr>
+                      <td class="px-2 py-1 border text-center">${i + 1}</td>
+                      <td class="px-2 py-1 border">${team.team}</td>
+                      <td class="px-2 py-1 border text-center font-semibold">${team.played}</td>
+                      <td class="px-2 py-1 border text-center">${team.win}</td>
+                      <td class="px-2 py-1 border text-center">${team.loss}</td>
+                      <td class="px-2 py-1 border text-center">${team.draw}</td>
+                      <td class="px-2 py-1 border text-center font-semibold">${team.goals}</td>
+                      <td class="px-2 py-1 border text-center font-bold">${team.points}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
           </div>
         `;
-      });
+      }).join('');
 
       pointTablesContainer.innerHTML = allPointsHTML;
     }
@@ -250,9 +261,13 @@
             groupTeams[i].played += 1;
             groupTeams[i].goals += goalsFor;
 
-            if (points === 3) groupTeams[i].win += 1;
-            else if (points === 1) groupTeams[i].draw += 1;
-            else groupTeams[i].loss += 1;
+            if (points === 3) {
+              groupTeams[i].win += 1;
+            } else if (points === 1) {
+              groupTeams[i].draw += 1;
+            } else {
+              groupTeams[i].loss += 1;
+            }
 
             await updateDoc(doc(db, "pointTables", docSnap.id), { teams: groupTeams });
             teamUpdated = true;
@@ -360,7 +375,6 @@
       const deletionsFixers = snapshotFixers.docs.map(docSnap => deleteDoc(doc(db, "fixers", docSnap.id)));
       await Promise.all(deletionsFixers);
 
-      // Also delete the related point tables
       const snapshotPointTables = await getDocs(collection(db, "pointTables"));
       const deletionsPointTables = snapshotPointTables.docs.map(docSnap => deleteDoc(doc(db, "pointTables", docSnap.id)));
       await Promise.all(deletionsPointTables);
@@ -369,7 +383,6 @@
       loadFixers();
       loadPointTables();
     });
-
   </script>
 
 </body>
