@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Point Tables</title>
+  <title>Match Fixers</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -16,11 +16,14 @@
       <div class="bg-red-600 bg-opacity-50 border border-red-500 text-red-300 w-9 h-9 flex items-center justify-center font-bold rounded-full shadow">FX</div>
       <h2 class="text-2xl font-bold bg-gradient-to-r from-red-400 via-yellow-300 to-red-400 bg-clip-text text-transparent">Fixers</h2>
     </div>
+    <div class="flex items-center gap-1 bg-gradient-to-br from-red-500 via-yellow-700 to-red-500 text-black px-2 py-1 rounded-full shadow-lg border border-yellow-200 h-[29px]">
+      <i class="fa-solid fa-users text-white text-sm"></i>
+    </div>
   </header>
 
   <!-- Point Tables -->
   <main class="max-w-3xl mx-auto px-4 mt-6 mb-20">
-    <div id="pointTablesContainer" class="space-y-6">
+    <div id="pointTablesContainer" class="space-y-6 mt-8">
       <!-- Point tables will be displayed here -->
     </div>
   </main>
@@ -28,7 +31,8 @@
   <!-- Firebase & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
@@ -42,6 +46,40 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let teamPhotos = {};
+
+    async function loadTeamPhotos() {
+      const snap = await getDocs(collection(db, "playersform"));
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.team && data.photoUrl) {
+          teamPhotos[data.team.trim().toLowerCase()] = data.photoUrl;
+        }
+      });
+    }
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
+    }
+
+    function convertBanglaToEnglish(str) {
+      const map = {
+        '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+        '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+      };
+      return str.replace(/[০-৯]/g, digit => map[digit]);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await loadTeamPhotos();
+        displayPointTables();
+      }
+    });
 
     function displayPointTables() {
       const pointTablesContainer = document.getElementById("pointTablesContainer");
@@ -98,10 +136,6 @@
         pointTablesContainer.innerHTML = html;
       });
     }
-
-    // Display the point tables after loading data
-    displayPointTables();
   </script>
-
 </body>
 </html>
