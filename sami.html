@@ -30,6 +30,7 @@
           <select id="stageSelect" class="border border-gray-300 rounded p-2 text-sm h-9">
             <option value="knockout">Knockout Fixers</option>
             <option value="quarterfinal">Quarterfinal Fixers</option>
+            <option value="samifinal">Samifinal Fixers</option> <!-- Added Samifinal option -->
           </select>
 
           <!-- Date Input -->
@@ -56,6 +57,11 @@
     <!-- Quarterfinal Display -->
     <div id="quarterfinalContainer" class="space-y-6 max-h-[600px] overflow-y-auto">
       <p class="text-gray-500 text-center">Loading quarterfinals...</p>
+    </div>
+
+    <!-- Samifinal Display -->
+    <div id="samifinalContainer" class="space-y-6 max-h-[600px] overflow-y-auto">
+      <p class="text-gray-500 text-center">Loading samifinals...</p>
     </div>
 
     <!-- Top Teams Section -->
@@ -106,8 +112,6 @@
 
     async function loadKnockouts() {
       const knockoutsContainer = document.getElementById("knockoutsContainer");
-
-      // Listen for real-time updates
       onSnapshot(collection(db, "knockouts"), (snapshot) => {
         if (snapshot.empty) {
           knockoutsContainer.innerHTML = `<p class="text-gray-500 text-center">No knockouts found.</p>`;
@@ -115,7 +119,6 @@
         }
 
         const knockouts = [];
-
         snapshot.docs.forEach(docSnap => {
           const data = docSnap.data();
           const docRef = doc(db, "knockouts", docSnap.id);
@@ -136,7 +139,6 @@
             else winner = "Draw";
           }
 
-          // Update the winner field in Firestore if not already set
           if (winner !== "None" && data.winner !== winner) {
             updateDoc(docRef, { winner });
             data.winner = winner;
@@ -156,7 +158,6 @@
         const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
 
         let html = "";
-
         sortedDates.forEach(date => {
           const matches = knockoutsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
@@ -184,7 +185,6 @@
     async function loadQuarterfinals() {
       const quarterfinalContainer = document.getElementById("quarterfinalContainer");
 
-      // Listen for real-time updates for quarterfinals
       onSnapshot(collection(db, "quarterfinals"), (snapshot) => {
         if (snapshot.empty) {
           quarterfinalContainer.innerHTML = `<p class="text-gray-500 text-center">No quarterfinals found.</p>`;
@@ -192,7 +192,6 @@
         }
 
         const quarterfinals = [];
-
         snapshot.docs.forEach(docSnap => {
           const data = docSnap.data();
           const docRef = doc(db, "quarterfinals", docSnap.id);
@@ -213,7 +212,6 @@
             else winner = "Draw";
           }
 
-          // Update the winner field in Firestore if not already set
           if (winner !== "None" && data.winner !== winner) {
             updateDoc(docRef, { winner });
             data.winner = winner;
@@ -233,7 +231,6 @@
         const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
 
         let html = "";
-
         sortedDates.forEach(date => {
           const matches = quarterfinalsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
@@ -362,7 +359,7 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
-            winner: "None"  // Adding winner field here
+            winner: "None"
           });
           added++;
         }
@@ -378,7 +375,6 @@
       }
 
       if (selectedStage === "quarterfinal") {
-        // Load winners from the knockouts
         const knockoutSnapshot = await getDocs(collection(db, "knockouts"));
         const knockoutWinners = [];
 
@@ -414,6 +410,42 @@
         });
       }
 
+      if (selectedStage === "samifinal") {  // New logic for Samifinal
+        const quarterfinalSnapshot = await getDocs(collection(db, "quarterfinals"));
+        const semifinalWinners = [];
+
+        quarterfinalSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          if (data.winner !== "None") semifinalWinners.push(data.winner);
+        });
+
+        for (let i = 0; i < 2; i++) {
+          const team1 = semifinalWinners[i];
+          const team2 = semifinalWinners[3 - i];
+          const matchDate = new Date(baseDate);
+
+          await addDoc(collection(db, "samifinals"), {
+            team1: team1,
+            team2: team2,
+            date: matchDate.toISOString().split("T")[0],
+            team1Goal: null,
+            team2Goal: null,
+            status: "Pending",
+            winner: "None"
+          });
+          added++;
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: `${added} semifinal match fixers added!`,
+          position: 'top-end',
+          toast: true,
+          timer: 3000,
+          showConfirmButton: false
+        });
+      }
+
       loadKnockouts();
       loadQuarterfinals(); // Refresh quarterfinals display
     });
@@ -435,7 +467,10 @@
       const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
       const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
 
-      await Promise.all([...deletionsKnockouts, ...deletionsQuarterfinals]);
+      const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
+      const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
+
+      await Promise.all([...deletionsKnockouts, ...deletionsQuarterfinals, ...deletionsSamifinals]);
 
       Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
 
