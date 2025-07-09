@@ -85,6 +85,7 @@
         const globalGoals = {};
 
         sortedDates.forEach(date => {
+          const groupName = String.fromCharCode(65 + groupIndex);
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           const points = {};
@@ -147,11 +148,12 @@
           // **Limit to max 4 teams per group here:**
           sortedTeams = sortedTeams.slice(0, 4);
 
-          allGroupsPoints.push({ date, sortedTeams });
+          allGroupsPoints.push({ groupName, sortedTeams });
+          groupIndex++;
 
-          // Save to pointTables collection
+          // Save to pointTables collection (groupName instead of date)
           const pointTableData = {
-            date: date,
+            groupName: groupName,  // Save groupName instead of date
             teams: sortedTeams.map(team => ({
               team: team.team,
               played: team.played,
@@ -164,8 +166,8 @@
           };
 
           // Save the point table data to Firestore under the pointTables collection
-          setDoc(doc(db, "pointTables", date), pointTableData).then(() => {
-            console.log("Point table saved for date: " + date);
+          setDoc(doc(db, "pointTables", groupName), pointTableData).then(() => {
+            console.log("Point table saved for group: " + groupName);
           }).catch((error) => {
             console.error("Error saving point table: ", error);
           });
@@ -176,9 +178,9 @@
         if (allGroupsPoints.length === 0) {
           allPointsHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
         } else {
-          allPointsHTML = allGroupsPoints.map(({ date, sortedTeams }) => `
+          allPointsHTML = allGroupsPoints.map(({ groupName, sortedTeams }) => `
             <div class="mb-4">
-              <div class="font-semibold mb-1 text-blue-700">Point Table - ${date}</div>
+              <div class="font-semibold mb-1 text-blue-700">Point Table - ${groupName}</div>
               <table class="text-sm w-full table-auto border border-gray-200">
                 <thead>
                   <tr class="bg-gray-200">
