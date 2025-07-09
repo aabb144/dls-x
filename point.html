@@ -172,6 +172,13 @@
           }).catch((error) => {
             console.error("Error saving point table: ", error);
           });
+
+          // Save all points data in allPointTables collection
+          setDoc(doc(db, "allPointTables", groupName), pointTableData).then(() => {
+            console.log("All points saved for group: " + groupName);
+          }).catch((error) => {
+            console.error("Error saving all points: ", error);
+          });
         });
 
         // Group-wise tables
