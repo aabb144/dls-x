@@ -61,54 +61,49 @@
     </div>
   </main>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      addDoc,
-      deleteDoc,
-      updateDoc,
-      doc,
-      onSnapshot
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+   <script type="module">
+  // Firebase imports (no changes here)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+    authDomain: "dls12364.firebaseapp.com",
+    projectId: "dls12364",
+    storageBucket: "dls12364.firebasestorage.app",
+    messagingSenderId: "431397971734",
+    appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+    measurementId: "G-B75EB4GGRV"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) window.location.href = "login.html";
-      else {
-        loadKnockouts();
-        loadTopTeams(); // Load top teams only (allTeams removed)
-      }
-    });
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = "login.html";
+    else {
+      loadKnockouts();
+      loadTopTeams();
+    }
+  });
 
-    async function loadKnockouts() {
-      const snapshot = await getDocs(collection(db, "knockouts"));
-      const knockoutsContainer = document.getElementById("knockoutsContainer");
+  async function loadKnockouts() {
+    const knockoutsContainer = document.getElementById("knockoutsContainer");
 
-      if (snapshot.empty) {
-        knockoutsContainer.innerHTML = `<p class="text-gray-500 text-center">No knockouts found.</p>`;
-        return;
-      }
-
+    // Real-time listener for the "knockouts" collection
+    onSnapshot(collection(db, "knockouts"), (snapshot) => {
       const knockouts = [];
-
-      for (const docSnap of snapshot.docs) {
+      snapshot.docs.forEach((docSnap) => {
         const data = docSnap.data();
         const docRef = doc(db, "knockouts", docSnap.id);
 
@@ -117,15 +112,15 @@
         let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
 
         if (data.status !== status) {
-          await updateDoc(docRef, { status });
+          updateDoc(docRef, { status });
           data.status = status;
         }
 
         knockouts.push(data);
-      }
+      });
 
       const knockoutsByDate = {};
-      knockouts.forEach(fix => {
+      knockouts.forEach((fix) => {
         const key = fix.date;
         if (!knockoutsByDate[key]) knockoutsByDate[key] = [];
         knockoutsByDate[key].push(fix);
@@ -136,7 +131,7 @@
 
       let html = "";
 
-      sortedDates.forEach(date => {
+      sortedDates.forEach((date) => {
         const matches = knockoutsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
         matches.forEach((match, idx) => {
@@ -163,150 +158,90 @@
       });
 
       knockoutsContainer.innerHTML = html;
+    });
+  }
+
+  function addDays(dateStr, days) {
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split("T")[0];
+  }
+
+  // Add Fixer button functionality
+  document.getElementById("addFixerBtn").addEventListener("click", async () => {
+    const baseDate = document.getElementById("fixerDate").value;
+    const selectedStage = document.getElementById("stageSelect").value;
+
+    if (!baseDate) {
+      Swal.fire({ icon: 'warning', title: 'Please fill out all fields.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
+      return;
     }
 
-    async function loadTopTeams() {
-      const snapshot = await getDocs(collection(db, "pointTables"));
-      const topTeamsContainer = document.getElementById("topteamsContainer");
+    let added = 0;
+    let topTeams = [];
 
-      if (snapshot.empty) {
-        topTeamsContainer.innerHTML = `<div class="text-center text-gray-500">No teams available.</div>`;
-        return;
-      }
-
-      let groupTeams = {};
-
-      snapshot.forEach(doc => {
-        const pointTable = doc.data();
-        const groupName = pointTable.groupName;
-
-        if (!groupTeams[groupName]) {
-          groupTeams[groupName] = [];
-        }
-
-        pointTable.teams.forEach((team) => {
-          groupTeams[groupName].push({ name: team.team, points: team.points, goals: team.goals || 0 });
-        });
-      });
-
-      const sortedGroups = Object.keys(groupTeams).sort();
-
-      let topTeamsHtml = "";
-
-      sortedGroups.forEach(group => {
-        const teams = groupTeams[group];
-
-        topTeamsHtml += `
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">${group}</h3>
-            <div class="border p-4 rounded-lg shadow-md bg-white">
-              <div class="space-y-2">
-        `;
-
-        const topTeams = teams.sort((a, b) => {
-          if (b.points === a.points) {
-            return b.goals - a.goals;
-          }
-          return b.points - a.points;
-        }).slice(0, 2);
-
-        topTeams.forEach((team, idx) => {
-          topTeamsHtml += `
-            <div class="flex justify-between text-sm text-gray-700">
-              <div>${idx + 1}. ${team.name}</div>
-              <div>Points: ${team.points}, Goals: ${team.goals || 0}</div>
-            </div>
-          `;
-        });
-
-        topTeamsHtml += `
-              </div>
-            </div>
-          </div>
-        `;
-      });
-
-      document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
-    }
-
-    document.getElementById("addFixerBtn").addEventListener("click", async () => {
-      const baseDate = document.getElementById("fixerDate").value;
-      const selectedStage = document.getElementById("stageSelect").value;
-
-      if (!baseDate) {
-        Swal.fire({ icon: 'warning', title: 'Please fill out all fields.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
-        return;
-      }
-
-      let added = 0;
-      let topTeams = [];
-
-      // Collect teams shown in topteamsContainer
-      const teamElements = document.querySelectorAll("#topteamsContainer .space-y-2 .flex");
-      teamElements.forEach((element) => {
-        const teamName = element.querySelector('div').innerText.split('.')[1].trim();
-        topTeams.push({ name: teamName });
-      });
-
-      if (selectedStage === "knockout") {
-        topTeams = topTeams.slice(0, 16);
-
-        for (let i = 0; i < 8; i++) {
-          const team1 = topTeams[i];
-          const team2 = topTeams[15 - i];
-          const matchDate = new Date(baseDate);
-
-          await addDoc(collection(db, "knockouts"), {
-            team1: team1.name,
-            team2: team2.name,
-            date: matchDate.toISOString().split("T")[0],
-            team1Goal: null,
-            team2Goal: null,
-            status: "Pending",
-          });
-          added++;
-        }
-
-        Swal.fire({
-          icon: 'success',
-          title: `${added} knockout match fixers added!`,
-          position: 'top-end',
-          toast: true,
-          timer: 3000,
-          showConfirmButton: false
-        });
-      }
-
-      loadKnockouts();
+    // Collect teams from the topTeamsContainer
+    const teamElements = document.querySelectorAll("#topteamsContainer .space-y-2 .flex");
+    teamElements.forEach((element) => {
+      const teamName = element.querySelector('div').innerText.split('.')[1].trim();
+      topTeams.push({ name: teamName });
     });
 
-    document.getElementById("deleteAllBtn").addEventListener("click", async () => {
-      const confirm = await Swal.fire({
-        title: 'Are you sure?',
-        text: "All match fixers will be deleted!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete all!',
+    if (selectedStage === "knockout") {
+      topTeams = topTeams.slice(0, 16);
+
+      for (let i = 0; i < 8; i++) {
+        const team1 = topTeams[i];
+        const team2 = topTeams[15 - i];
+        const matchDate = new Date(baseDate);
+
+        await addDoc(collection(db, "knockouts"), {
+          team1: team1.name,
+          team2: team2.name,
+          date: matchDate.toISOString().split("T")[0],
+          team1Goal: null,
+          team2Goal: null,
+          status: "Pending",
+        });
+        added++;
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: `${added} knockout match fixers added!`,
+        position: 'top-end',
+        toast: true,
+        timer: 3000,
+        showConfirmButton: false
       });
+    }
 
-      if (!confirm.isConfirmed) return;
+    loadKnockouts();
+  });
 
-      const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
-      const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
-
-      await Promise.all([...deletionsKnockouts]);
-
-      Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
-
-      loadKnockouts();
+  // Delete All button functionality
+  document.getElementById("deleteAllBtn").addEventListener("click", async () => {
+    const confirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "All match fixers will be deleted!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete all!',
     });
-  </script>
+
+    if (!confirm.isConfirmed) return;
+
+    const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
+    const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
+
+    await Promise.all([...deletionsKnockouts]);
+
+    Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
+
+    loadKnockouts();
+  });
+</script>
+
 
 </body>
 </html>
