@@ -186,6 +186,70 @@
       });
     }
 
+    async function loadTopTeams() {
+      const snapshot = await getDocs(collection(db, "pointTables"));
+      const topTeamsContainer = document.getElementById("topteamsContainer");
+
+      if (snapshot.empty) {
+        topTeamsContainer.innerHTML = `<div class="text-center text-gray-500">No teams available.</div>`;
+        return;
+      }
+
+      let groupTeams = {};
+
+      snapshot.forEach(doc => {
+        const pointTable = doc.data();
+        const groupName = pointTable.groupName;
+
+        if (!groupTeams[groupName]) {
+          groupTeams[groupName] = [];
+        }
+
+        pointTable.teams.forEach((team) => {
+          groupTeams[groupName].push({ name: team.team, points: team.points, goals: team.goals || 0 });
+        });
+      });
+
+      const sortedGroups = Object.keys(groupTeams).sort();
+
+      let topTeamsHtml = "";
+
+      sortedGroups.forEach(group => {
+        const teams = groupTeams[group];
+
+        topTeamsHtml += `
+          <div class="mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">${group}</h3>
+            <div class="border p-4 rounded-lg shadow-md bg-white">
+              <div class="space-y-2">
+        `;
+
+        const topTeams = teams.sort((a, b) => {
+          if (b.points === a.points) {
+            return b.goals - a.goals;
+          }
+          return b.points - a.points;
+        }).slice(0, 2);
+
+        topTeams.forEach((team, idx) => {
+          topTeamsHtml += `
+            <div class="flex justify-between text-sm text-gray-700">
+              <div>${idx + 1}. ${team.name}</div>
+              <div>Points: ${team.points}, Goals: ${team.goals || 0}</div>
+            </div>
+          `;
+        });
+
+        topTeamsHtml += `
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
+    }
+
     async function loadQuarterfinals() {
       const quarterfinalContainer = document.getElementById("quarterfinalContainer");
 
