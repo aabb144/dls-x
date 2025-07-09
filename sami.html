@@ -76,14 +76,14 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-      authDomain: "dls12364.firebaseapp.com",
-      projectId: "dls12364",
-      storageBucket: "dls12364.firebasestorage.app",
-      messagingSenderId: "431397971734",
-      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-      measurementId: "G-B75EB4GGRV"
-    };
+  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+  authDomain: "dls12364.firebaseapp.com",
+  projectId: "dls12364",
+  storageBucket: "dls12364.firebasestorage.app",
+  messagingSenderId: "431397971734",
+  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+  measurementId: "G-B75EB4GGRV"
+};
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -98,79 +98,56 @@
     });
 
     async function loadKnockouts() {
-      const snapshot = await getDocs(collection(db, "knockouts"));
       const knockoutsContainer = document.getElementById("knockoutsContainer");
+      const query = collection(db, "knockouts");
 
-      if (snapshot.empty) {
-        knockoutsContainer.innerHTML = `<p class="text-gray-500 text-center">No knockouts found.</p>`;
-        return;
-      }
-
-      const knockouts = [];
-
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const docRef = doc(db, "knockouts", docSnap.id);
-
-        const g1 = data.team1Goal;
-        const g2 = data.team2Goal;
-        let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
-
-        if (data.status !== status) {
-          updateDoc(docRef, { status });
-          data.status = status;
+      // Listen to real-time updates for knockouts collection
+      onSnapshot(query, (snapshot) => {
+        if (snapshot.empty) {
+          knockoutsContainer.innerHTML = `<p class="text-gray-500 text-center">No knockouts found.</p>`;
+          return;
         }
 
-        let winner = "None";
-        if (status === "Finished") {
-          if (g1 > g2) winner = data.team1;
-          else if (g2 > g1) winner = data.team2;
-          else winner = "Draw";
+        let html = "<h2 class='text-2xl font-semibold text-center text-gray-800 mb-4'>Knockout Matches</h2>";  // Adding the Knockout Matches header
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const docRef = doc(db, "knockouts", docSnap.id);
 
-          updateDoc(docRef, { winner });
-        }
+          const g1 = data.team1Goal;
+          const g2 = data.team2Goal;
+          let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
+          let winner = "None";
 
-        knockouts.push(data);
-      });
+          if (status === "Finished") {
+            if (g1 > g2) winner = data.team1;
+            else if (g2 > g1) winner = data.team2;
+            else winner = "Draw";
 
-      const knockoutsByDate = {};
-      knockouts.forEach(fix => {
-        const key = fix.date;
-        if (!knockoutsByDate[key]) knockoutsByDate[key] = [];
-        knockoutsByDate[key].push(fix);
-      });
+            // Update winner in Firestore if not already updated
+            if (data.winner !== winner) {
+              updateDoc(docRef, { winner });
+            }
+          }
 
-      const sortedDates = Object.keys(knockoutsByDate).sort();
-      const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
+          if (data.status !== status) {
+            updateDoc(docRef, { status });
+          }
 
-      let html = "";
-
-      sortedDates.forEach(date => {
-        const matches = knockoutsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
-
-        matches.forEach((match, idx) => {
-          let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
           html += `
             <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
-              <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
+              <div class="text-center text-[13px] text-gray-500 font-semibold">${data.date}</div>
               <div class="flex justify-between items-center px-2">
-                <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
+                <div class="text-sm font-semibold text-gray-600">${data.team1} <span class="text-black">(${data.team1Goal ?? "-"})</span></div>
                 <div class="text-base font-bold text-red-500">VS</div>
-                <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
+                <div class="text-sm font-semibold text-gray-600">${data.team2} <span class="text-black">(${data.team2Goal ?? "-"})</span></div>
               </div>
-              <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
-              <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
+              <div class="text-center text-green-600 text-xs font-medium">Winner: ${winner}</div>
+              <div class="text-center text-blue-600 text-xs font-medium">Status: ${status}</div>
             </div>`;
         });
+
+        knockoutsContainer.innerHTML = html;
       });
-
-      knockoutsContainer.innerHTML = html;
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
     }
 
     async function loadTopTeams() {
@@ -271,6 +248,7 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
+            winner: "None"
           });
           added++;
         }
