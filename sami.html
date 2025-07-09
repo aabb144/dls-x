@@ -30,7 +30,7 @@
           <select id="stageSelect" class="border border-gray-300 rounded p-2 text-sm h-9">
             <option value="knockout">Knockout Fixers</option>
             <option value="quarterfinal">Quarterfinal Fixers</option>
-            <option value="samifinal">Samifinal Fixers</option> <!-- Added Samifinal option -->
+            <option value="samifinal">Samifinal Fixers</option>
           </select>
 
           <!-- Date Input -->
@@ -106,8 +106,8 @@
       else {
         loadKnockouts();
         loadQuarterfinals();
-        loadSamifinals(); // Load samifinals
-        loadTopTeams(); // Load top teams only
+        loadSamifinals();
+        loadTopTeams(); // Load top teams only (allTeams removed)
       }
     });
 
@@ -122,7 +122,6 @@
         }
 
         const knockouts = [];
-
         snapshot.docs.forEach(docSnap => {
           const data = docSnap.data();
           const docRef = doc(db, "knockouts", docSnap.id);
@@ -163,7 +162,6 @@
         const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
 
         let html = "";
-
         sortedDates.forEach(date => {
           const matches = knockoutsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
@@ -199,7 +197,6 @@
         }
 
         const quarterfinals = [];
-
         snapshot.docs.forEach(docSnap => {
           const data = docSnap.data();
           const docRef = doc(db, "quarterfinals", docSnap.id);
@@ -240,7 +237,6 @@
         const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
 
         let html = "";
-
         sortedDates.forEach(date => {
           const matches = quarterfinalsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
@@ -276,37 +272,68 @@
         }
 
         const samifinals = [];
-
         snapshot.docs.forEach(docSnap => {
           const data = docSnap.data();
+          const docRef = doc(db, "samifinals", docSnap.id);
 
-          samifinals.push(data);
+          const g1 = data.team1Goal;
+          const g2 = data.team2Goal;
+          let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
+
+          if (data.status !== status) {
+            updateDoc(docRef, { status });
+            data.status = status;
+          }
+
+          let winner = "None";
+          if (typeof g1 === "number" && typeof g2 === "number") {
+            if (g1 > g2) winner = data.team1;
+            else if (g2 > g1) winner = data.team2;
+            else winner = "Draw";
+          }
+
+          // Update the winner field in Firestore if not already set
+          if (winner !== "None" && data.winner !== winner) {
+            updateDoc(docRef, { winner });
+            data.winner = winner;
+          }
+
+          samifinals.push({ ...data, winner });
         });
 
-        let html = "";
+        const samifinalsByDate = {};
+        samifinals.forEach(fix => {
+          const key = fix.date;
+          if (!samifinalsByDate[key]) samifinalsByDate[key] = [];
+          samifinalsByDate[key].push(fix);
+        });
 
-        samifinals.forEach((match) => {
-          html += `
-            <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
-              <div class="text-center text-[13px] text-gray-500 font-semibold">${match.date}</div>
-              <div class="flex justify-between items-center px-2">
-                <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
-                <div class="text-base font-bold text-red-500">VS</div>
-                <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
-              </div>
-              <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
-              <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
-            </div>`;
+        const sortedDates = Object.keys(samifinalsByDate).sort();
+        const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
+
+        let html = "";
+        sortedDates.forEach(date => {
+          const matches = samifinalsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          matches.forEach((match, idx) => {
+            let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
+
+            html += `
+              <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
+                <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
+                <div class="flex justify-between items-center px-2">
+                  <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
+                  <div class="text-base font-bold text-red-500">VS</div>
+                  <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
+                </div>
+                <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
+                <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
+              </div>`;
+          });
         });
 
         samifinalContainer.innerHTML = html;
       });
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
     }
 
     document.getElementById("addFixerBtn").addEventListener("click", async () => {
@@ -343,7 +370,7 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
-            winner: "None"
+            winner: "None"  // Adding winner field here
           });
           added++;
         }
@@ -434,7 +461,7 @@
 
       loadKnockouts();
       loadQuarterfinals(); // Refresh quarterfinals display
-      loadSamifinals(); // Refresh samifinals display
+      loadSamifinals();  // Refresh samifinals display
     });
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
@@ -463,8 +490,14 @@
 
       loadKnockouts();
       loadQuarterfinals(); // Refresh quarterfinals display
-      loadSamifinals(); // Refresh samifinals display
+      loadSamifinals();  // Refresh samifinals display
     });
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
+    }
   </script>
 
 </body>
