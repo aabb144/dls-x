@@ -60,46 +60,126 @@
       const pointTablesContainer = document.getElementById("pointTablesContainer");
       const allPointsContainer = document.getElementById("allPointsContainer");
 
-      // Fetch point tables from the 'pointTables' collection
-      onSnapshot(collection(db, "pointTables"), (snapshot) => {
+      onSnapshot(collection(db, "fixers"), (snapshot) => {
         if (snapshot.empty) {
           pointTablesContainer.innerHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
           allPointsContainer.innerHTML = `<p class="text-gray-500 text-center">No overall point table to show.</p>`;
           return;
         }
 
-        let allGroupsPoints = [];
-        let globalPoints = {};
-        let globalGoals = {};
+        const fixers = [];
+        snapshot.forEach(doc => fixers.push(doc.data()));
 
-        snapshot.forEach(doc => {
-          const pointTable = doc.data();
-          const groupName = pointTable.groupName;
-          const sortedTeams = pointTable.teams;
+        const fixersByDate = {};
+        fixers.forEach(fix => {
+          const key = fix.date;
+          if (!fixersByDate[key]) fixersByDate[key] = [];
+          fixersByDate[key].push(fix);
+        });
 
-          allGroupsPoints.push({ groupName, sortedTeams });
+        const sortedDates = Object.keys(fixersByDate).sort();
 
-          // Collect global points and goals
-          sortedTeams.forEach(team => {
-            const teamName = team.team;
-            if (!globalPoints[teamName]) {
-              globalPoints[teamName] = { win: 0, loss: 0, draw: 0 };
-              globalGoals[teamName] = 0;
+        let groupIndex = 0;
+        const allGroupsPoints = [];
+        const globalPoints = {};
+        const globalGoals = {};
+
+        sortedDates.forEach(date => {
+          // Prefix group name with 'Group-' and a letter (A, B, C, ...)
+          const groupName = `Group-${String.fromCharCode(65 + groupIndex)}`;
+          const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          const points = {};
+          const goals = {};
+
+          matches.forEach(match => {
+            const g1 = match.team1Goal;
+            const g2 = match.team2Goal;
+
+            if (!points[match.team1]) points[match.team1] = { win: 0, loss: 0, draw: 0 };
+            if (!points[match.team2]) points[match.team2] = { win: 0, loss: 0, draw: 0 };
+            if (!goals[match.team1]) goals[match.team1] = 0;
+            if (!goals[match.team2]) goals[match.team2] = 0;
+
+            if (!globalPoints[match.team1]) globalPoints[match.team1] = { win: 0, loss: 0, draw: 0 };
+            if (!globalPoints[match.team2]) globalPoints[match.team2] = { win: 0, loss: 0, draw: 0 };
+            if (!globalGoals[match.team1]) globalGoals[match.team1] = 0;
+            if (!globalGoals[match.team2]) globalGoals[match.team2] = 0;
+
+            if (typeof g1 === "number") {
+              goals[match.team1] += g1;
+              globalGoals[match.team1] += g1;
+            }
+            if (typeof g2 === "number") {
+              goals[match.team2] += g2;
+              globalGoals[match.team2] += g2;
             }
 
-            globalPoints[teamName].win += team.win;
-            globalPoints[teamName].loss += team.loss;
-            globalPoints[teamName].draw += team.draw;
-            globalGoals[teamName] += team.goals;
+            if (typeof g1 === "number" && typeof g2 === "number") {
+              if (g1 > g2) {
+                points[match.team1].win++;
+                points[match.team2].loss++;
+                globalPoints[match.team1].win++;
+                globalPoints[match.team2].loss++;
+              } else if (g2 > g1) {
+                points[match.team2].win++;
+                points[match.team1].loss++;
+                globalPoints[match.team2].win++;
+                globalPoints[match.team1].loss++;
+              } else {
+                points[match.team1].draw++;
+                points[match.team2].draw++;
+                globalPoints[match.team1].draw++;
+                globalPoints[match.team2].draw++;
+              }
+            }
+          });
+
+          let sortedTeams = Object.entries(points).map(([team, stat]) => ({
+            team,
+            ...stat,
+            points: stat.win * 3 + stat.draw,
+            played: stat.win + stat.loss + stat.draw,
+            goals: goals[team] || 0,
+          })).sort((a, b) => {
+            if (b.points !== a.points) return b.points - a.points;
+            return b.goals - a.goals;
+          });
+
+          // **Limit to max 4 teams per group here:**
+          sortedTeams = sortedTeams.slice(0, 4);
+
+          allGroupsPoints.push({ groupName, sortedTeams });
+          groupIndex++;
+
+          // Save to pointTables collection (with 'Group-' prefix)
+          const pointTableData = {
+            groupName: groupName,  // Save groupName as 'Group-A', 'Group-B', etc.
+            teams: sortedTeams.map(team => ({
+              team: team.team,
+              played: team.played,
+              win: team.win,
+              loss: team.loss,
+              draw: team.draw,
+              goals: team.goals,
+              points: team.points
+            }))
+          };
+
+          // Save the point table data to Firestore under the pointTables collection
+          setDoc(doc(db, "pointTables", groupName), pointTableData).then(() => {
+            console.log("Point table saved for group: " + groupName);
+          }).catch((error) => {
+            console.error("Error saving point table: ", error);
           });
         });
 
         // Group-wise tables
-        let groupPointsHTML = "";
+        let allPointsHTML = "";
         if (allGroupsPoints.length === 0) {
-          groupPointsHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
+          allPointsHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
         } else {
-          groupPointsHTML = allGroupsPoints.map(({ groupName, sortedTeams }) => `
+          allPointsHTML = allGroupsPoints.map(({ groupName, sortedTeams }) => `
             <div class="mb-4">
               <div class="font-semibold mb-1 text-blue-700">Point Table - ${groupName}</div>
               <table class="text-sm w-full table-auto border border-gray-200">
@@ -133,7 +213,7 @@
             </div>
           `).join('');
         }
-        pointTablesContainer.innerHTML = groupPointsHTML;
+        pointTablesContainer.innerHTML = allPointsHTML;
 
         // All teams consolidated table
         const allTeams = Object.entries(globalPoints).map(([team, stat]) => ({
