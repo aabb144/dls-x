@@ -519,6 +519,12 @@
         timer: 3000,
         showConfirmButton: false
       });
+      // Refresh match displays
+    loadKnockouts();
+    loadQuarterfinals();
+    loadSamifinals();
+    loadFinals();  // New function to load finals
+  });
     }
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
