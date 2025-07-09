@@ -76,14 +76,14 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-      authDomain: "dls12364.firebaseapp.com",
-      projectId: "dls12364",
-      storageBucket: "dls12364.firebasestorage.app",
-      messagingSenderId: "431397971734",
-      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-      measurementId: "G-B75EB4GGRV"
-    };
+  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+  authDomain: "dls12364.firebaseapp.com",
+  projectId: "dls12364",
+  storageBucket: "dls12364.firebasestorage.app",
+  messagingSenderId: "431397971734",
+  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+  measurementId: "G-B75EB4GGRV"
+};
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -214,13 +214,6 @@
       document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
     }
 
-    // Function to add days to a given date
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
-    }
-
     document.getElementById("addFixerBtn").addEventListener("click", async () => {
       const baseDate = document.getElementById("fixerDate").value;
       const selectedStage = document.getElementById("stageSelect").value;
@@ -243,24 +236,21 @@
       if (selectedStage === "knockout") {
         topTeams = topTeams.slice(0, 16);
 
-        let matchDate = baseDate;
-
         for (let i = 0; i < 8; i++) {
           const team1 = topTeams[i];
           const team2 = topTeams[15 - i];
+          const matchDate = new Date(baseDate);
 
           await addDoc(collection(db, "knockouts"), {
             team1: team1.name,
             team2: team2.name,
-            date: matchDate,
+            date: matchDate.toISOString().split("T")[0],
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
             winner: "None"
           });
-
           added++;
-          matchDate = addDays(matchDate, 1); // Increment date by 1 day
         }
 
         Swal.fire({
