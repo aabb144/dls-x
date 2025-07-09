@@ -76,14 +76,14 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -219,7 +219,14 @@
       const selectedStage = document.getElementById("stageSelect").value;
 
       if (!baseDate) {
-        Swal.fire({ icon: 'warning', title: 'Please fill out all fields.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
+        Swal.fire({
+          icon: 'warning',
+          title: 'Please fill out all fields.',
+          position: 'top-end',
+          toast: true,
+          timer: 3000,
+          showConfirmButton: false
+        });
         return;
       }
 
@@ -235,11 +242,11 @@
 
       if (selectedStage === "knockout") {
         topTeams = topTeams.slice(0, 16);
+        let matchDate = new Date(baseDate); // Start with the base date
 
         for (let i = 0; i < 8; i++) {
           const team1 = topTeams[i];
           const team2 = topTeams[15 - i];
-          const matchDate = new Date(baseDate);
 
           await addDoc(collection(db, "knockouts"), {
             team1: team1.name,
@@ -251,6 +258,9 @@
             winner: "None"
           });
           added++;
+
+          // Increment the date for the next match
+          matchDate.setDate(matchDate.getDate() + 1);
         }
 
         Swal.fire({
