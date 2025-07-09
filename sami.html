@@ -93,7 +93,7 @@
       if (!user) window.location.href = "login.html";
       else {
         loadKnockouts();
-        loadTopTeams(); // Load top teams only (allTeams removed)
+        loadTopTeams();
       }
     });
 
@@ -272,6 +272,7 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
+            winner: "None"
           });
           added++;
         }
