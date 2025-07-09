@@ -99,6 +99,7 @@
       if (!user) window.location.href = "login.html";
       else {
         loadKnockouts();
+        loadQuarterfinals();
         loadTopTeams(); // Load top teams only (allTeams removed)
       }
     });
@@ -177,6 +178,83 @@
         });
 
         knockoutsContainer.innerHTML = html;
+      });
+    }
+
+    async function loadQuarterfinals() {
+      const quarterfinalContainer = document.getElementById("quarterfinalContainer");
+
+      // Listen for real-time updates
+      onSnapshot(collection(db, "quarterfinals"), (snapshot) => {
+        if (snapshot.empty) {
+          quarterfinalContainer.innerHTML = `<p class="text-gray-500 text-center">No quarterfinals found.</p>`;
+          return;
+        }
+
+        const quarterfinals = [];
+
+        snapshot.docs.forEach(docSnap => {
+          const data = docSnap.data();
+          const docRef = doc(db, "quarterfinals", docSnap.id);
+
+          const g1 = data.team1Goal;
+          const g2 = data.team2Goal;
+          let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
+
+          if (data.status !== status) {
+            updateDoc(docRef, { status });
+            data.status = status;
+          }
+
+          let winner = "None";
+          if (typeof g1 === "number" && typeof g2 === "number") {
+            if (g1 > g2) winner = data.team1;
+            else if (g2 > g1) winner = data.team2;
+            else winner = "Draw";
+          }
+
+          // Update the winner field in Firestore if not already set
+          if (winner !== "None" && data.winner !== winner) {
+            updateDoc(docRef, { winner });
+            data.winner = winner;
+          }
+
+          quarterfinals.push({ ...data, winner });
+        });
+
+        const quarterfinalsByDate = {};
+        quarterfinals.forEach(fix => {
+          const key = fix.date;
+          if (!quarterfinalsByDate[key]) quarterfinalsByDate[key] = [];
+          quarterfinalsByDate[key].push(fix);
+        });
+
+        const sortedDates = Object.keys(quarterfinalsByDate).sort();
+        const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
+
+        let html = "";
+
+        sortedDates.forEach(date => {
+          const matches = quarterfinalsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          matches.forEach((match, idx) => {
+            let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
+
+            html += `
+              <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
+                <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
+                <div class="flex justify-between items-center px-2">
+                  <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
+                  <div class="text-base font-bold text-red-500">VS</div>
+                  <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
+                </div>
+                <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
+                <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
+              </div>`;
+          });
+        });
+
+        quarterfinalContainer.innerHTML = html;
       });
     }
 
@@ -330,6 +408,7 @@
       }
 
       loadKnockouts();
+      loadQuarterfinals(); // Refresh quarterfinals display
     });
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
@@ -354,6 +433,7 @@
       Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
 
       loadKnockouts();
+      loadQuarterfinals(); // Refresh quarterfinals display
     });
   </script>
 
