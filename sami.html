@@ -106,7 +106,8 @@
       else {
         loadKnockouts();
         loadQuarterfinals();
-        loadTopTeams(); // Load top teams only (allTeams removed)
+        loadSamifinal();  // Call the function to load Samifinal data
+        loadTopTeams(); // Load top teams only
       }
     });
 
@@ -255,68 +256,77 @@
       });
     }
 
-    async function loadTopTeams() {
-      const snapshot = await getDocs(collection(db, "pointTables"));
-      const topTeamsContainer = document.getElementById("topteamsContainer");
+    async function loadSamifinal() {
+      const samifinalContainer = document.getElementById("samifinalContainer");
 
-      if (snapshot.empty) {
-        topTeamsContainer.innerHTML = `<div class="text-center text-gray-500">No teams available.</div>`;
-        return;
-      }
-
-      let groupTeams = {};
-
-      snapshot.forEach(doc => {
-        const pointTable = doc.data();
-        const groupName = pointTable.groupName;
-
-        if (!groupTeams[groupName]) {
-          groupTeams[groupName] = [];
+      onSnapshot(collection(db, "samifinals"), (snapshot) => {
+        if (snapshot.empty) {
+          samifinalContainer.innerHTML = `<p class="text-gray-500 text-center">No samifinals found.</p>`;
+          return;
         }
 
-        pointTable.teams.forEach((team) => {
-          groupTeams[groupName].push({ name: team.team, points: team.points, goals: team.goals || 0 });
-        });
-      });
+        const samifinals = [];
+        snapshot.docs.forEach(docSnap => {
+          const data = docSnap.data();
+          const docRef = doc(db, "samifinals", docSnap.id);
 
-      const sortedGroups = Object.keys(groupTeams).sort();
+          const g1 = data.team1Goal;
+          const g2 = data.team2Goal;
+          let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
 
-      let topTeamsHtml = "";
-
-      sortedGroups.forEach(group => {
-        const teams = groupTeams[group];
-
-        topTeamsHtml += `
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">${group}</h3>
-            <div class="border p-4 rounded-lg shadow-md bg-white">
-              <div class="space-y-2">
-        `;
-
-        const topTeams = teams.sort((a, b) => {
-          if (b.points === a.points) {
-            return b.goals - a.goals;
+          if (data.status !== status) {
+            updateDoc(docRef, { status });
+            data.status = status;
           }
-          return b.points - a.points;
-        }).slice(0, 2);
 
-        topTeams.forEach((team, idx) => {
-          topTeamsHtml += `
-            <div class="flex justify-between text-sm text-gray-700">
-              <div>${idx + 1}. ${team.name}</div>
-              <div>Points: ${team.points}, Goals: ${team.goals || 0}</div>
-            </div>
-          `;
+          let winner = "None";
+          if (typeof g1 === "number" && typeof g2 === "number") {
+            if (g1 > g2) winner = data.team1;
+            else if (g2 > g1) winner = data.team2;
+            else winner = "Draw";
+          }
+
+          if (winner !== "None" && data.winner !== winner) {
+            updateDoc(docRef, { winner });
+            data.winner = winner;
+          }
+
+          samifinals.push({ ...data, winner });
         });
 
-        topTeamsHtml += `
-              </div>
-            </div>
-          </div>
-        `;
-      });
+        const samifinalsByDate = {};
+        samifinals.forEach(fix => {
+          const key = fix.date;
+          if (!samifinalsByDate[key]) samifinalsByDate[key] = [];
+          samifinalsByDate[key].push(fix);
+        });
 
-      document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
+        const sortedDates = Object.keys(samifinalsByDate).sort();
+        const baseDate = sortedDates.length > 0 ? sortedDates[0] : null;
+
+        let html = "";
+        sortedDates.forEach(date => {
+          const matches = samifinalsByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          matches.forEach((match, idx) => {
+            let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
+
+            html += `
+              <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
+                <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
+                <div class="flex justify-between items-center px-2">
+                  <div class="text-sm font-semibold text-gray-600">${match.team1} <span class="text-black">(${match.team1Goal ?? "-"})</span></div>
+                  <div class="text-base font-bold text-red-500">VS</div>
+                  <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
+                </div>
+                <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
+                <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
+              </div>`;
+          });
+        });
+
+        samifinalContainer.innerHTML = html;
+      });
     }
 
     function addDays(dateStr, days) {
@@ -478,6 +488,5 @@
       loadQuarterfinals(); // Refresh quarterfinals display
     });
   </script>
-
 </body>
 </html>
