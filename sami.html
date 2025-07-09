@@ -93,7 +93,7 @@
       if (!user) window.location.href = "login.html";
       else {
         loadKnockouts();
-        loadTopTeams();
+        loadTopTeams(); // Load top teams only (allTeams removed)
       }
     });
 
@@ -127,6 +127,12 @@
             if (g1 > g2) winner = data.team1;
             else if (g2 > g1) winner = data.team2;
             else winner = "Draw";
+          }
+
+          // Update the winner field in Firestore if not already set
+          if (winner !== "None" && data.winner !== winner) {
+            updateDoc(docRef, { winner });
+            data.winner = winner;
           }
 
           knockouts.push({ ...data, winner });
@@ -272,7 +278,7 @@
             team1Goal: null,
             team2Goal: null,
             status: "Pending",
-            winner: "None"
+            winner: "None"  // Adding winner field here
           });
           added++;
         }
