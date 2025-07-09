@@ -26,23 +26,26 @@
     <div id="fixers-list" class="space-y-6">
       <p class="text-center text-gray-400">লোড হচ্ছে...</p>
     </div>
+    <div id="pointTablesContainer" class="space-y-6 mt-8">
+      <!-- Point tables will be displayed here -->
+    </div>
   </main>
 
   <!-- Firebase & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -194,6 +197,65 @@
             Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
           });
         });
+
+        // Add logic to display point tables here
+        displayPointTables();
+      });
+    }
+
+    function displayPointTables() {
+      const pointTablesContainer = document.getElementById("pointTablesContainer");
+
+      // Fetch point tables from Firebase and display them
+      const pointTablesRef = collection(db, "pointTables");
+      onSnapshot(pointTablesRef, (snapshot) => {
+        let html = "";
+        
+        if (snapshot.empty) {
+          html = `<p class="text-center text-gray-400">কোনো পয়েন্ট টেবিল নেই।</p>`;
+        } else {
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const groupName = data.groupName;
+            const teams = data.teams;
+
+            html += `
+              <div class="bg-gray-800 p-4 rounded-lg">
+                <h3 class="text-xl font-semibold text-yellow-400 mb-2">Group ${groupName}</h3>
+                <table class="w-full table-auto text-sm text-gray-400">
+                  <thead>
+                    <tr class="bg-gray-700">
+                      <th class="px-3 py-2">#</th>
+                      <th class="px-3 py-2">Team</th>
+                      <th class="px-3 py-2 text-center">Played</th>
+                      <th class="px-3 py-2 text-center">Win</th>
+                      <th class="px-3 py-2 text-center">Loss</th>
+                      <th class="px-3 py-2 text-center">Draw</th>
+                      <th class="px-3 py-2 text-center">Goals</th>
+                      <th class="px-3 py-2 text-center">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${teams.map((team, index) => `
+                      <tr class="border-b border-gray-700">
+                        <td class="px-3 py-2 text-center">${index + 1}</td>
+                        <td class="px-3 py-2">${team.team}</td>
+                        <td class="px-3 py-2 text-center">${team.played}</td>
+                        <td class="px-3 py-2 text-center">${team.win}</td>
+                        <td class="px-3 py-2 text-center">${team.loss}</td>
+                        <td class="px-3 py-2 text-center">${team.draw}</td>
+                        <td class="px-3 py-2 text-center">${team.goals}</td>
+                        <td class="px-3 py-2 text-center">${team.points}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `;
+          });
+        }
+
+        pointTablesContainer.innerHTML = html;
       });
     }
   </script>
