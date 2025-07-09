@@ -184,7 +184,7 @@
     async function loadQuarterfinals() {
       const quarterfinalContainer = document.getElementById("quarterfinalContainer");
 
-      // Listen for real-time updates
+      // Listen for real-time updates for quarterfinals
       onSnapshot(collection(db, "quarterfinals"), (snapshot) => {
         if (snapshot.empty) {
           quarterfinalContainer.innerHTML = `<p class="text-gray-500 text-center">No quarterfinals found.</p>`;
@@ -378,16 +378,23 @@
       }
 
       if (selectedStage === "quarterfinal") {
-        topTeams = topTeams.slice(0, 8);
+        // Load winners from the knockouts
+        const knockoutSnapshot = await getDocs(collection(db, "knockouts"));
+        const knockoutWinners = [];
+
+        knockoutSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          if (data.winner !== "None") knockoutWinners.push(data.winner);
+        });
 
         for (let i = 0; i < 4; i++) {
-          const team1 = topTeams[i];
-          const team2 = topTeams[7 - i];
+          const team1 = knockoutWinners[i];
+          const team2 = knockoutWinners[7 - i];
           const matchDate = new Date(baseDate);
 
           await addDoc(collection(db, "quarterfinals"), {
-            team1: team1.name,
-            team2: team2.name,
+            team1: team1,
+            team2: team2,
             date: matchDate.toISOString().split("T")[0],
             team1Goal: null,
             team2Goal: null,
