@@ -85,7 +85,6 @@
         const globalGoals = {};
 
         sortedDates.forEach(date => {
-          const groupName = String.fromCharCode(65 + groupIndex);
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           const points = {};
@@ -148,13 +147,11 @@
           // **Limit to max 4 teams per group here:**
           sortedTeams = sortedTeams.slice(0, 4);
 
-          allGroupsPoints.push({ groupName, sortedTeams });
-          groupIndex++;
+          allGroupsPoints.push({ date, sortedTeams });
 
           // Save to pointTables collection
           const pointTableData = {
             date: date,
-            groupName: groupName,
             teams: sortedTeams.map(team => ({
               team: team.team,
               played: team.played,
@@ -179,9 +176,9 @@
         if (allGroupsPoints.length === 0) {
           allPointsHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
         } else {
-          allPointsHTML = allGroupsPoints.map(({ groupName, sortedTeams }) => `
+          allPointsHTML = allGroupsPoints.map(({ date, sortedTeams }) => `
             <div class="mb-4">
-              <div class="font-semibold mb-1 text-blue-700">Point Table - ${groupName}</div>
+              <div class="font-semibold mb-1 text-blue-700">Point Table - ${date}</div>
               <table class="text-sm w-full table-auto border border-gray-200">
                 <thead>
                   <tr class="bg-gray-200">
