@@ -255,6 +255,12 @@
       document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
     }
 
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
+    }
+
     async function loadQuarterfinals() {
       const quarterfinalContainer = document.getElementById("quarterfinalContainer");
 
@@ -561,12 +567,6 @@
       loadQuarterfinals(); // Refresh quarterfinals display
       loadSamifinals();  // Refresh samifinals display
     });
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
-    }
   </script>
 
 </body>
