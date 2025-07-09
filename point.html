@@ -35,7 +35,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDooTNeDHoWUU9nLxYxyBIhewydt7Xl_M0",
@@ -55,29 +55,29 @@
       else loadPointTables();
     });
 
-    // Function to load point tables
+    // Function to load point tables and save to pointTables collection
     function loadPointTables() {
       const pointTablesContainer = document.getElementById("pointTablesContainer");
       const allPointsContainer = document.getElementById("allPointsContainer");
 
-      onSnapshot(collection(db, "pointTables"), (snapshot) => { // Changed 'fixers' to 'pointTables'
+      onSnapshot(collection(db, "fixers"), (snapshot) => {
         if (snapshot.empty) {
           pointTablesContainer.innerHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
           allPointsContainer.innerHTML = `<p class="text-gray-500 text-center">No overall point table to show.</p>`;
           return;
         }
 
-        const pointTables = [];
-        snapshot.forEach(doc => pointTables.push(doc.data()));
+        const fixers = [];
+        snapshot.forEach(doc => fixers.push(doc.data()));
 
-        const pointTablesByDate = {};
-        pointTables.forEach(fix => {
+        const fixersByDate = {};
+        fixers.forEach(fix => {
           const key = fix.date;
-          if (!pointTablesByDate[key]) pointTablesByDate[key] = [];
-          pointTablesByDate[key].push(fix);
+          if (!fixersByDate[key]) fixersByDate[key] = [];
+          fixersByDate[key].push(fix);
         });
 
-        const sortedDates = Object.keys(pointTablesByDate).sort();
+        const sortedDates = Object.keys(fixersByDate).sort();
 
         let groupIndex = 0;
         const allGroupsPoints = [];
@@ -86,7 +86,7 @@
 
         sortedDates.forEach(date => {
           const groupName = String.fromCharCode(65 + groupIndex);
-          const matches = pointTablesByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+          const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           const points = {};
           const goals = {};
@@ -150,6 +150,28 @@
 
           allGroupsPoints.push({ groupName, sortedTeams });
           groupIndex++;
+
+          // Save to pointTables collection
+          const pointTableData = {
+            date: date,
+            groupName: groupName,
+            teams: sortedTeams.map(team => ({
+              team: team.team,
+              played: team.played,
+              win: team.win,
+              loss: team.loss,
+              draw: team.draw,
+              goals: team.goals,
+              points: team.points
+            }))
+          };
+
+          // Save the point table data to Firestore under the pointTables collection
+          setDoc(doc(db, "pointTables", date), pointTableData).then(() => {
+            console.log("Point table saved for date: " + date);
+          }).catch((error) => {
+            console.error("Error saving point table: ", error);
+          });
         });
 
         // Group-wise tables
