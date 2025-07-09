@@ -85,7 +85,8 @@
         const globalGoals = {};
 
         sortedDates.forEach(date => {
-          const groupName = String.fromCharCode(65 + groupIndex);
+          // Prefix group name with 'Group-' and a letter (A, B, C, ...)
+          const groupName = `Group-${String.fromCharCode(65 + groupIndex)}`;
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           const points = {};
@@ -151,9 +152,9 @@
           allGroupsPoints.push({ groupName, sortedTeams });
           groupIndex++;
 
-          // Save to pointTables collection (groupName instead of date)
+          // Save to pointTables collection (with 'Group-' prefix)
           const pointTableData = {
-            groupName: groupName,  // Save groupName instead of date
+            groupName: groupName,  // Save groupName as 'Group-A', 'Group-B', etc.
             teams: sortedTeams.map(team => ({
               team: team.team,
               played: team.played,
