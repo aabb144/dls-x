@@ -76,14 +76,14 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -93,7 +93,7 @@
       if (!user) window.location.href = "login.html";
       else {
         loadKnockouts();
-        loadTopTeams(); // Load top teams only (allTeams removed)
+        loadTopTeams();
       }
     });
 
@@ -108,7 +108,7 @@
 
       const knockouts = [];
 
-      for (const docSnap of snapshot.docs) {
+      snapshot.forEach(docSnap => {
         const data = docSnap.data();
         const docRef = doc(db, "knockouts", docSnap.id);
 
@@ -117,12 +117,21 @@
         let status = (typeof g1 === 'number' && typeof g2 === 'number') ? "Finished" : "Pending";
 
         if (data.status !== status) {
-          await updateDoc(docRef, { status });
+          updateDoc(docRef, { status });
           data.status = status;
         }
 
+        let winner = "None";
+        if (status === "Finished") {
+          if (g1 > g2) winner = data.team1;
+          else if (g2 > g1) winner = data.team2;
+          else winner = "Draw";
+
+          updateDoc(docRef, { winner });
+        }
+
         knockouts.push(data);
-      }
+      });
 
       const knockoutsByDate = {};
       knockouts.forEach(fix => {
@@ -141,13 +150,6 @@
 
         matches.forEach((match, idx) => {
           let displayDate = baseDate ? addDays(baseDate, idx) : match.date;
-          let winner = "None";
-          if (typeof match.team1Goal === "number" && typeof match.team2Goal === "number") {
-            if (match.team1Goal > match.team2Goal) winner = match.team1;
-            else if (match.team2Goal > match.team1Goal) winner = match.team2;
-            else winner = "Draw";
-          }
-
           html += `
             <div class="border p-2 rounded shadow-sm text-xs space-y-1 bg-white mb-1">
               <div class="text-center text-[13px] text-gray-500 font-semibold">${displayDate}</div>
@@ -156,13 +158,19 @@
                 <div class="text-base font-bold text-red-500">VS</div>
                 <div class="text-sm font-semibold text-gray-600">${match.team2} <span class="text-black">(${match.team2Goal ?? "-"})</span></div>
               </div>
-              <div class="text-center text-green-600 text-xs font-medium">Winner: ${winner}</div>
+              <div class="text-center text-green-600 text-xs font-medium">Winner: ${match.winner}</div>
               <div class="text-center text-blue-600 text-xs font-medium">Status: ${match.status}</div>
             </div>`;
         });
       });
 
       knockoutsContainer.innerHTML = html;
+    }
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
     }
 
     async function loadTopTeams() {
@@ -227,12 +235,6 @@
       });
 
       document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
     }
 
     document.getElementById("addFixerBtn").addEventListener("click", async () => {
