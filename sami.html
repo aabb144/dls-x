@@ -29,6 +29,7 @@
           <!-- Stage Select Dropdown -->
           <select id="stageSelect" class="border border-gray-300 rounded p-2 text-sm h-9">
             <option value="knockout">Knockout Fixers</option>
+            <option value="quarterfinal">Quarterfinal Fixers</option>
           </select>
 
           <!-- Date Input -->
@@ -50,6 +51,11 @@
     <!-- Knockouts Display -->
     <div id="knockoutsContainer" class="space-y-6 max-h-[600px] overflow-y-auto">
       <p class="text-gray-500 text-center">Loading knockouts...</p>
+    </div>
+
+    <!-- Quarterfinal Display -->
+    <div id="quarterfinalContainer" class="space-y-6 max-h-[600px] overflow-y-auto">
+      <p class="text-gray-500 text-center">Loading quarterfinals...</p>
     </div>
 
     <!-- Top Teams Section -->
@@ -293,6 +299,36 @@
         });
       }
 
+      if (selectedStage === "quarterfinal") {
+        topTeams = topTeams.slice(0, 8);
+
+        for (let i = 0; i < 4; i++) {
+          const team1 = topTeams[i];
+          const team2 = topTeams[7 - i];
+          const matchDate = new Date(baseDate);
+
+          await addDoc(collection(db, "quarterfinals"), {
+            team1: team1.name,
+            team2: team2.name,
+            date: matchDate.toISOString().split("T")[0],
+            team1Goal: null,
+            team2Goal: null,
+            status: "Pending",
+            winner: "None"
+          });
+          added++;
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: `${added} quarterfinal match fixers added!`,
+          position: 'top-end',
+          toast: true,
+          timer: 3000,
+          showConfirmButton: false
+        });
+      }
+
       loadKnockouts();
     });
 
@@ -310,7 +346,10 @@
       const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
       const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
 
-      await Promise.all([...deletionsKnockouts]);
+      const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
+      const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
+
+      await Promise.all([...deletionsKnockouts, ...deletionsQuarterfinals]);
 
       Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
 
