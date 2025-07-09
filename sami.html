@@ -527,6 +527,52 @@
       });
     }
 
+    document.getElementById("deleteAllBtn").addEventListener("click", async () => {
+  const confirm = await Swal.fire({
+    title: 'Are you sure?',
+    text: "All match fixers will be deleted!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete all!',
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  // Delete from Knockouts collection
+  const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
+  const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
+
+  // Delete from Quarterfinals collection
+  const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
+  const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
+
+  // Delete from Samifinals collection
+  const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
+  const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
+
+  // Delete from Finals collection (Added)
+  const snapshotFinals = await getDocs(collection(db, "finals"));
+  const deletionsFinals = snapshotFinals.docs.map(docSnap => deleteDoc(doc(db, "finals", docSnap.id)));
+
+  // Wait for all deletions to complete
+  await Promise.all([
+    ...deletionsKnockouts, 
+    ...deletionsQuarterfinals, 
+    ...deletionsSamifinals, 
+    ...deletionsFinals
+  ]);
+
+  // Show success message
+  Swal.fire({
+    icon: 'success',
+    title: 'All match fixers deleted.',
+    position: 'top-end',
+    toast: true,
+    timer: 3000,
+    showConfirmButton: false
+  });
+});
+
     // Refresh match displays
     loadKnockouts();
     loadQuarterfinals();
