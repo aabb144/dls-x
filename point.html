@@ -60,24 +60,24 @@
       const pointTablesContainer = document.getElementById("pointTablesContainer");
       const allPointsContainer = document.getElementById("allPointsContainer");
 
-      onSnapshot(collection(db, "fixers"), (snapshot) => {
+      onSnapshot(collection(db, "pointTables"), (snapshot) => { // Changed 'fixers' to 'pointTables'
         if (snapshot.empty) {
           pointTablesContainer.innerHTML = `<p class="text-gray-500 text-center">No point tables to show.</p>`;
           allPointsContainer.innerHTML = `<p class="text-gray-500 text-center">No overall point table to show.</p>`;
           return;
         }
 
-        const fixers = [];
-        snapshot.forEach(doc => fixers.push(doc.data()));
+        const pointTables = [];
+        snapshot.forEach(doc => pointTables.push(doc.data()));
 
-        const fixersByDate = {};
-        fixers.forEach(fix => {
+        const pointTablesByDate = {};
+        pointTables.forEach(fix => {
           const key = fix.date;
-          if (!fixersByDate[key]) fixersByDate[key] = [];
-          fixersByDate[key].push(fix);
+          if (!pointTablesByDate[key]) pointTablesByDate[key] = [];
+          pointTablesByDate[key].push(fix);
         });
 
-        const sortedDates = Object.keys(fixersByDate).sort();
+        const sortedDates = Object.keys(pointTablesByDate).sort();
 
         let groupIndex = 0;
         const allGroupsPoints = [];
@@ -86,7 +86,7 @@
 
         sortedDates.forEach(date => {
           const groupName = String.fromCharCode(65 + groupIndex);
-          const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+          const matches = pointTablesByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           const points = {};
           const goals = {};
