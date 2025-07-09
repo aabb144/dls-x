@@ -106,8 +106,8 @@
       else {
         loadKnockouts();
         loadQuarterfinals();
-        loadSamifinal();  // Call the function to load Samifinal data
-        loadTopTeams(); // Load top teams only
+        loadSamifinal();
+        loadTopTeams();
       }
     });
 
@@ -456,8 +456,10 @@
         });
       }
 
-      loadKnockouts();
-      loadQuarterfinals(); // Refresh quarterfinals display
+        loadKnockouts();
+        loadQuarterfinals();
+        loadSamifinal();
+        loadTopTeams();
     });
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
@@ -484,8 +486,10 @@
 
       Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
 
-      loadKnockouts();
-      loadQuarterfinals(); // Refresh quarterfinals display
+        loadKnockouts();
+        loadQuarterfinals();
+        loadSamifinal();
+        loadTopTeams();
     });
   </script>
 </body>
