@@ -550,15 +550,15 @@
   const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
   const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
 
-  // Delete from Finals collection (Added)
+  // Delete from Finals collection
   const snapshotFinals = await getDocs(collection(db, "finals"));
   const deletionsFinals = snapshotFinals.docs.map(docSnap => deleteDoc(doc(db, "finals", docSnap.id)));
 
   // Wait for all deletions to complete
   await Promise.all([
-    ...deletionsKnockouts, 
-    ...deletionsQuarterfinals, 
-    ...deletionsSamifinals, 
+    ...deletionsKnockouts,
+    ...deletionsQuarterfinals,
+    ...deletionsSamifinals,
     ...deletionsFinals
   ]);
 
@@ -571,14 +571,14 @@
     timer: 3000,
     showConfirmButton: false
   });
+
+  // Refresh match displays
+  loadKnockouts();
+  loadQuarterfinals();
+  loadSamifinals();
+  loadFinals();  // New function to load finals
 });
 
-    // Refresh match displays
-    loadKnockouts();
-    loadQuarterfinals();
-    loadSamifinals();
-    loadFinals();  // New function to load finals
-  });
 </script>
 
 
