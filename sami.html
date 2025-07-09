@@ -121,7 +121,6 @@
   async function loadKnockouts() {
     const knockoutsContainer = document.getElementById("knockoutsContainer");
 
-    // Listen for real-time updates
     onSnapshot(collection(db, "knockouts"), (snapshot) => {
       if (snapshot.empty) {
         knockoutsContainer.innerHTML = `<p class="text-gray-500 text-center">No knockouts found.</p>`;
@@ -149,7 +148,6 @@
           else winner = "Draw";
         }
 
-        // Update the winner field in Firestore if not already set
         if (winner !== "None" && data.winner !== winner) {
           updateDoc(docRef, { winner });
           data.winner = winner;
@@ -257,11 +255,11 @@
     document.getElementById("topteamsContainer").innerHTML = topTeamsHtml;
   }
 
-    function addDays(dateStr, days) {
+  function addDays(dateStr, days) {
     const d = new Date(dateStr);
     d.setDate(d.getDate() + days);
     return d.toISOString().split("T")[0];
-    }
+  }
 
   async function loadQuarterfinals() {
     const quarterfinalContainer = document.getElementById("quarterfinalContainer");
@@ -323,7 +321,6 @@
     });
   }
 
-  // Function to load the finals matches
   async function loadFinals() {
     const finalsContainer = document.getElementById("finalContainer");
 
@@ -373,7 +370,6 @@
     let added = 0;
     let topTeams = [];
 
-    // Collect teams shown in topteamsContainer
     const teamElements = document.querySelectorAll("#topteamsContainer .space-y-2 .flex");
     teamElements.forEach((element) => {
       const teamName = element.querySelector('div').innerText.split('.')[1].trim();
@@ -483,7 +479,6 @@
     }
 
     if (selectedStage === "final") {
-      // Fetch winners from samifinals
       const samifinalSnapshot = await getDocs(collection(db, "samifinals"));
       const samifinalWinners = [];
 
@@ -504,7 +499,6 @@
         return;
       }
 
-      // Add final match to the finals collection
       const matchDate = new Date(baseDate);
 
       await addDoc(collection(db, "finals"), {
@@ -528,58 +522,59 @@
     }
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
-  const confirm = await Swal.fire({
-    title: 'Are you sure?',
-    text: "All match fixers will be deleted!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, delete all!',
+      const confirm = await Swal.fire({
+        title: 'Are you sure?',
+        text: "All match fixers will be deleted!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete all!',
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      // Delete from Knockouts collection
+      const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
+      const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
+
+      // Delete from Quarterfinals collection
+      const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
+      const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
+
+      // Delete from Samifinals collection
+      const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
+      const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
+
+      // Delete from Finals collection
+      const snapshotFinals = await getDocs(collection(db, "finals"));
+      const deletionsFinals = snapshotFinals.docs.map(docSnap => deleteDoc(doc(db, "finals", docSnap.id)));
+
+      // Wait for all deletions to complete
+      await Promise.all([
+        ...deletionsKnockouts,
+        ...deletionsQuarterfinals,
+        ...deletionsSamifinals,
+        ...deletionsFinals
+      ]);
+
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'All match fixers deleted.',
+        position: 'top-end',
+        toast: true,
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+      // Refresh match displays
+      loadKnockouts();
+      loadQuarterfinals();
+      loadSamifinals();
+      loadFinals();  // New function to load finals
+    });
   });
-
-  if (!confirm.isConfirmed) return;
-
-  // Delete from Knockouts collection
-  const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
-  const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
-
-  // Delete from Quarterfinals collection
-  const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
-  const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
-
-  // Delete from Samifinals collection
-  const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
-  const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
-
-  // Delete from Finals collection
-  const snapshotFinals = await getDocs(collection(db, "finals"));
-  const deletionsFinals = snapshotFinals.docs.map(docSnap => deleteDoc(doc(db, "finals", docSnap.id)));
-
-  // Wait for all deletions to complete
-  await Promise.all([
-    ...deletionsKnockouts,
-    ...deletionsQuarterfinals,
-    ...deletionsSamifinals,
-    ...deletionsFinals
-  ]);
-
-  // Show success message
-  Swal.fire({
-    icon: 'success',
-    title: 'All match fixers deleted.',
-    position: 'top-end',
-    toast: true,
-    timer: 3000,
-    showConfirmButton: false
-  });
-
-  // Refresh match displays
-  loadKnockouts();
-  loadQuarterfinals();
-  loadSamifinals();
-  loadFinals();  // New function to load finals
-});
-
 </script>
+
 
 
 </body>
