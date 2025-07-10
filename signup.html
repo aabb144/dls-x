@@ -24,7 +24,7 @@
 
     <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
 
-    <form id="signupForm" onsubmit="signup(event)">
+    <form onsubmit="signup(event)">
       <!-- Username -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
@@ -89,26 +89,25 @@
 
     <div class="mt-2 text-center">
       <p class="text-base text-gray-300">Already have an account? 
-        <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium" id="loginLink">Login</a>
+        <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium">Login</a>
       </p>
     </div>
 
-  </div>
-
-  <!-- Photo URL Input Section (Outside of Sign-up Form) -->
-  <div id="photoUrlSection" class="hidden bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
-    <h2 class="text-md font-semibold text-white mb-6">Upload Your Profile Photo</h2>
-    <form onsubmit="uploadPhoto(event)">
-      <div class="mb-4">
-        <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
-        <input type="url" id="photoUrl" required placeholder="Enter image URL"
-          class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
-      </div>
-      <button type="submit"
-        class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
-        Submit Photo
-      </button>
-    </form>
+    <!-- Photo URL Input Section -->
+    <div id="photoUrlSection" class="hidden">
+      <h2 class="text-md font-semibold text-white mb-6">Upload Your Profile Photo</h2>
+      <form onsubmit="uploadPhoto(event)">
+        <div class="mb-4">
+          <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
+          <input type="url" id="photoUrl" required placeholder="Enter image URL"
+            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
+        </div>
+        <button type="submit"
+          class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
+          Submit Photo
+        </button>
+      </form>
+    </div>
   </div>
 
   <!-- Firebase Script -->
@@ -191,7 +190,6 @@
           console.error("Failed to fetch refer bonus config:", e);
         }
 
-        // Set the user document with default 'not verified' status
         await setDoc(doc(db, "users", uid), {
           uid,
           username,
@@ -201,7 +199,6 @@
           role: "user",
           referCode: uid,
           referredBy: inputReferCode || null,
-          verified: "not verified", // New field
           createdAt: serverTimestamp()
         });
 
@@ -229,9 +226,8 @@
           color: '#fff'
         });
 
-        // Show the photo URL input section and hide the rest
         setTimeout(() => {
-          document.getElementById("signupForm").style.display = 'none';
+          document.querySelector("form").style.display = 'none';
           document.getElementById("photoUrlSection").classList.remove("hidden");
         }, 2000);
 
@@ -253,8 +249,7 @@
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
         await updateDoc(userRef, {
-          photoUrl: photoUrl,
-          verified: "verified" // Update status to 'verified'
+          photoUrl: photoUrl
         });
 
         Swal.fire({
@@ -269,7 +264,6 @@
           color: '#fff'
         });
 
-        // Redirect to index.html after verification
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
@@ -278,25 +272,6 @@
         showError("Failed to upload photo URL: " + error.message);
       }
     };
-
-    // Check verification status and display accordingly
-    window.onload = async function() {
-      const user = auth.currentUser;
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const verifiedStatus = userDoc.data().verified;
-          if (verifiedStatus === "verified") {
-            window.location.href = "index.html"; // Redirect if verified
-          } else {
-            document.getElementById("photoUrlSection").classList.remove("hidden");
-            document.getElementById("signupForm").style.display = 'none'; // Hide signup form
-          }
-        }
-      }
-    };
-
   </script>
 </body>
 </html>
