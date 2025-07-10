@@ -28,6 +28,27 @@
     </div>
   </main>
 
+  <!-- Custom Goal Update Modal -->
+  <div id="goal-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-gray-900 text-white p-6 rounded-lg w-80">
+      <h3 class="text-xl text-center text-yellow-400 mb-4">Update Match Goals</h3>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col">
+          <label for="goal1" class="text-sm">Team 1 Goal:</label>
+          <input type="number" id="goal1" class="p-2 rounded bg-gray-800 text-white" placeholder="Enter Team 1 Goal" />
+        </div>
+        <div class="flex flex-col">
+          <label for="goal2" class="text-sm">Team 2 Goal:</label>
+          <input type="number" id="goal2" class="p-2 rounded bg-gray-800 text-white" placeholder="Enter Team 2 Goal" />
+        </div>
+        <div class="flex justify-center gap-4 mt-4">
+          <button id="close-modal" class="bg-red-500 text-white px-4 py-2 rounded">Cancel</button>
+          <button id="update-goals" class="bg-yellow-400 text-black px-4 py-2 rounded">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -59,28 +80,6 @@
           teamPhotos[data.team.trim().toLowerCase()] = data.photoUrl;
         }
       });
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().split("T")[0];
-    }
-
-    function convertBanglaToEnglish(str) {
-      const map = {
-        '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
-        '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
-      };
-      return str.replace(/[০-৯]/g, digit => map[digit]);
-    }
-
-    function formatDateAndTime(dateStr) {
-      const date = new Date(dateStr);
-      const day = date.getDate();
-      const month = date.toLocaleString('default', { month: 'long' });
-      const year = date.getFullYear();
-      return `Date: ${day}-${month}-${year} Time: 24 Hours`;
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -128,42 +127,28 @@
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           matches.forEach((match, idx) => {
-            const matchDateAndTime = formatDateAndTime(addDays(baseDate, idx));  // Updated date & time format
-            const team1Img = teamPhotos[match.team1.trim().toLowerCase()] || "";
-            const team2Img = teamPhotos[match.team2.trim().toLowerCase()] || "";
-
             const key = `${match.team1}__${match.team2}__${match.date}`;
-            const t1GoalVal = (match.team1Goal ?? "").toString();
-            const t2GoalVal = (match.team2Goal ?? "").toString();
-
             html += `
               <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
                 <div class="text-center mb-6 flex items-center justify-center">
-                 <div class="text-lg text-yellow-400 mr-2">
-                  Khelo DLS Tournament 2025
+                  <div class="text-lg text-yellow-400 mr-2">Khelo DLS Tournament 2025</div>
+                  <div>
+                    <i class="fa-solid fa-cloud-arrow-up cursor-pointer" data-key="${key}"></i>
+                  </div>
                 </div>
-                <div>
-                  <i class="fa-solid fa-cloud-arrow-up"></i>
-                 </div>
-               </div>
 
                 <div class="flex justify-center items-center gap-3 font-semibold text-white">
                   <div class="flex flex-col items-center gap-1 flex-1 justify-end">
-                    ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
                     <span>${match.team1}</span>
-                    <input type="text" inputmode="numeric" placeholder="0" id="goal1-${key}" value="${t1GoalVal}" class="mt-1 w-16 text-black rounded px-1 py-0.5 text-center text-sm goal-input" />
+                    <span>${match.team1Goal}</span>
                   </div>
 
                   <div class="text-yellow-400 font-bold text-2xl select-none">VS</div>
 
                   <div class="flex flex-col items-center gap-1 flex-1 justify-start">
-                    ${team2Img ? `<img src="${team2Img}" class="w-10 h-10 rounded-full" alt="${match.team2}" />` : ""}
                     <span>${match.team2}</span>
-                    <input type="text" inputmode="numeric" placeholder="0" id="goal2-${key}" value="${t2GoalVal}" class="mt-1 w-16 text-black rounded px-1 py-0.5 text-center text-sm goal-input" />
+                    <span>${match.team2Goal}</span>
                   </div>
-                </div>
-                <div class="text-center">
-                  <button data-key="${key}" class="update-goal-btn bg-yellow-400 text-black font-semibold px-3 py-1 rounded hover:bg-yellow-300 transition duration-200">Update</button>
                 </div>
               </div>
             `;
@@ -172,45 +157,43 @@
 
         fixersContainer.innerHTML = html;
 
-        // Convert input to English digits only
-        document.querySelectorAll(".goal-input").forEach(input => {
-          input.addEventListener("input", () => {
-            input.value = convertBanglaToEnglish(input.value.replace(/[^০-৯0-9]/g, ''));
-          });
-        });
-
-        document.querySelectorAll(".update-goal-btn").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
+        document.querySelectorAll(".fa-cloud-arrow-up").forEach(icon => {
+          icon.addEventListener("click", (e) => {
             const key = e.currentTarget.getAttribute("data-key");
-            const goal1Input = document.getElementById(`goal1-${key}`);
-            const goal2Input = document.getElementById(`goal2-${key}`);
-
-            let goal1 = convertBanglaToEnglish(goal1Input.value);
-            let goal2 = convertBanglaToEnglish(goal2Input.value);
-
-            goal1 = goal1 === "" ? null : Number(goal1);
-            goal2 = goal2 === "" ? null : Number(goal2);
-
-            if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
-              Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-              return;
-            }
-
-            const docRef = fixersDocs[key];
-            if (!docRef) {
-              Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-              return;
-            }
-
-            await updateDoc(docRef, {
-              team1Goal: goal1,
-              team2Goal: goal2,
-            });
-
-            Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+            openGoalModal(key);
           });
         });
       });
+    }
+
+    function openGoalModal(key) {
+      const modal = document.getElementById("goal-modal");
+      const goal1Input = document.getElementById("goal1");
+      const goal2Input = document.getElementById("goal2");
+
+      goal1Input.value = "";
+      goal2Input.value = "";
+
+      modal.classList.remove("hidden");
+
+      document.getElementById("update-goals").onclick = async () => {
+        const goal1 = parseInt(goal1Input.value, 10);
+        const goal2 = parseInt(goal2Input.value, 10);
+
+        if (isNaN(goal1) || isNaN(goal2)) {
+          alert("Please enter valid goal numbers.");
+          return;
+        }
+
+        await updateDoc(fixersDocs[key], { team1Goal: goal1, team2Goal: goal2 });
+
+        alert("Goals updated successfully!");
+        modal.classList.add("hidden");
+      };
+
+      document.getElementById("close-modal").onclick = () => {
+        modal.classList.add("hidden");
+      };
     }
   </script>
 </body>
