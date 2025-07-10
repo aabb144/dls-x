@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -61,8 +62,9 @@
   <main class="px-3 max-w-md mx-auto w-full space-y-6 pb-24">
     <!-- Profile Info -->
     <section class="bg-gray-900 bg-opacity-50 border border-gray-700 rounded-xl p-3 flex items-center gap-4 card-glow">
-      <div class="w-14 h-14 rounded-full bg-yellow-500 bg-opacity-20 flex items-center justify-center border-2 border-yellow-400 shadow-inner">
-        <i class="fa-solid fa-user text-2xl text-yellow-300"></i>
+      <div id="profileImageContainer" class="w-14 h-14 rounded-full bg-yellow-500 bg-opacity-20 flex items-center justify-center border-2 border-yellow-400 shadow-inner">
+        <!-- Image will be loaded dynamically -->
+        <img id="profileImage" class="w-full h-full rounded-full object-cover" alt="Profile Image" />
       </div>
       <div>
         <h3 id="username" class="text-lg font-bold text-yellow-400">Username</h3>
@@ -165,14 +167,14 @@
     import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -197,6 +199,12 @@
         const userData = userSnap.data();
         document.getElementById("username").textContent = userData.username || "No Name";
         document.getElementById("mainBalance").textContent = userData.balance ?? 0;
+
+        // Set the profile image from the user's database
+        const profileImage = userData.profileImage || ''; // Assuming you store the image URL as profileImage
+        if (profileImage) {
+          document.getElementById("profileImage").src = profileImage;
+        }
       }
 
       // Calculate total referrals
