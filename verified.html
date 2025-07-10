@@ -23,6 +23,7 @@
     </div>
 
     <h2 class="text-md font-semibold text-white mb-6">Upload a photo to verify your account</h2>
+    <p class="text-sm text-gray-400 mb-4">This helps ensure the security of your account. Once uploaded, you'll gain access to all the benefits of a verified account.</p>
     <form onsubmit="uploadPhoto(event)">
       <div class="mb-4">
         <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
@@ -34,6 +35,8 @@
         Verified Account
       </button>
     </form>
+
+    <p class="text-xs text-gray-500 mt-6">By verifying your account, you help us maintain a safe and secure platform for everyone. If you need assistance, please contact support.</p>
   </div>
 
   <!-- Firebase Script -->
@@ -93,7 +96,7 @@
           toast: true,
           position: 'top-end',
           icon: 'success',
-          title: 'Your account verified successful!',
+          title: 'Your account verified successfully!',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
