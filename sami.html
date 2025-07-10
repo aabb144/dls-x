@@ -644,34 +644,50 @@ async function loadFinals() {
 }
 
     document.getElementById("deleteAllBtn").addEventListener("click", async () => {
-      const confirm = await Swal.fire({
-        title: 'Are you sure?',
-        text: "All match fixers will be deleted!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete all!',
-      });
+  const confirm = await Swal.fire({
+    title: 'Are you sure?',
+    text: "All match fixers will be deleted!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete all!',
+  });
 
-      if (!confirm.isConfirmed) return;
+  if (!confirm.isConfirmed) return;
 
-      const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
-      const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
+  const snapshotKnockouts = await getDocs(collection(db, "knockouts"));
+  const deletionsKnockouts = snapshotKnockouts.docs.map(docSnap => deleteDoc(doc(db, "knockouts", docSnap.id)));
 
-      const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
-      const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
+  const snapshotQuarterfinals = await getDocs(collection(db, "quarterfinals"));
+  const deletionsQuarterfinals = snapshotQuarterfinals.docs.map(docSnap => deleteDoc(doc(db, "quarterfinals", docSnap.id)));
 
-      const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
-      const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
+  const snapshotSamifinals = await getDocs(collection(db, "samifinals"));
+  const deletionsSamifinals = snapshotSamifinals.docs.map(docSnap => deleteDoc(doc(db, "samifinals", docSnap.id)));
 
-      await Promise.all([...deletionsKnockouts, ...deletionsQuarterfinals, ...deletionsSamifinals]);
+  const snapshotFinals = await getDocs(collection(db, "finals"));
+  const deletionsFinals = snapshotFinals.docs.map(docSnap => deleteDoc(doc(db, "finals", docSnap.id)));
 
-      Swal.fire({ icon: 'success', title: 'All match fixers deleted.', position: 'top-end', toast: true, timer: 3000, showConfirmButton: false });
+  await Promise.all([
+    ...deletionsKnockouts,
+    ...deletionsQuarterfinals,
+    ...deletionsSamifinals,
+    ...deletionsFinals
+  ]);
 
-      loadKnockouts();
-      loadQuarterfinals();
-      loadSamifinals();
-      loadFinals();
-    });
+  Swal.fire({
+    icon: 'success',
+    title: 'All match fixers deleted.',
+    position: 'top-end',
+    toast: true,
+    timer: 3000,
+    showConfirmButton: false
+  });
+
+  loadKnockouts();
+  loadQuarterfinals();
+  loadSamifinals();
+  loadFinals();
+});
+
   </script>
 </body>
 </html>
