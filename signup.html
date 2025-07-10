@@ -153,6 +153,19 @@
       document.getElementById("referCodeInput").value = refCode;
     }
 
+    // This will make sure photoUrlSection and form behave as expected after reload
+    window.onload = function () {
+      const photoUrl = localStorage.getItem("photoUrl");
+
+      if (!photoUrl) {
+        document.getElementById("photoUrlSection").classList.remove("hidden");
+        document.getElementById("signupForm").style.display = 'block';
+      } else {
+        document.getElementById("photoUrlSection").classList.add("hidden");
+        document.getElementById("signupForm").style.display = 'none';
+      }
+    };
+
     window.signup = async function (event) {
       event.preventDefault();
 
@@ -254,6 +267,8 @@
           photoUrl: photoUrl
         });
 
+        localStorage.setItem("photoUrl", photoUrl);
+
         Swal.fire({
           toast: true,
           position: 'top-end',
@@ -272,6 +287,8 @@
 
       } catch (error) {
         showError("Failed to upload photo URL: " + error.message);
+        document.getElementById("photoUrlSection").classList.remove("hidden");
+        document.getElementById("signupForm").style.display = 'block';
       }
     };
   </script>
