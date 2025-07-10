@@ -76,9 +76,11 @@
     }
 
     function formatDate(dateStr) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
       const date = new Date(dateStr);
-      return date.toLocaleDateString('en-US', options);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'long' });
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
     }
 
     onAuthStateChanged(auth, async (user) => {
