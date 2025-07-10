@@ -24,7 +24,7 @@
 
     <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
 
-    <form id="signupForm" onsubmit="signup(event)">
+    <form onsubmit="signup(event)">
       <!-- Username -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
@@ -230,7 +230,6 @@
         setTimeout(() => {
           document.querySelector("form").style.display = 'none';
           document.getElementById("photoUrlSection").classList.remove("hidden");
-          document.getElementById("signupForm").style.display = 'none'; // Hide form after signup
         }, 2000);
 
       } catch (error) {
@@ -266,7 +265,6 @@
           color: '#fff'
         });
 
-        // Redirect to index.html after photo upload
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
