@@ -204,6 +204,8 @@
         const profileImage = userData.profileImage || ''; // Assuming you store the image URL as profileImage
         if (profileImage) {
           document.getElementById("profileImage").src = profileImage;
+        } else {
+          document.getElementById("profileImage").src = 'default-avatar.png'; // Fallback image
         }
       }
 
