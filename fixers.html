@@ -152,8 +152,8 @@
               <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
                 <div class="flex items-center justify-between space-x-3">
                   <p class="text-sm font-semibold uppercase">Khelo DLS Tournament 2025</p>
-                  <p class="bg-gray-800 py-1 px-2 rounded-lg text-white flex items-center justify-center">
-                    <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                  <p data-key="${key}" class="bg-gray-800 py-1 px-2 rounded-lg text-white flex items-center justify-center">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
                   </p>
                 </div>
                 <div class="text-center text-gray-400 mb-1 text-md">${matchDateAndTime}</div>
@@ -161,7 +161,6 @@
                   <div class="flex flex-col items-center gap-1 flex-1 justify-end">
                     ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
                     <span>${match.team1}</span>
-                    <button data-key="${key}" class="open-goal-modal-btn bg-yellow-400 text-black font-semibold px-3 py-1 rounded hover:bg-yellow-300 transition duration-200">Update Goal</button>
                   </div>
 
                   <div class="text-yellow-400 font-bold text-2xl select-none">VS</div>
