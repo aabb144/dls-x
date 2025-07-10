@@ -15,33 +15,9 @@
     }
   </style>
 </head>
-<body class="bg-gray-900">
-  
+<body class="bg-gray-900 flex items-center justify-center min-h-screen px-5 py-10">
+  <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
 
-    <!-- Verified Section -->
-     <div id="verified-section" class="hidden max-auto px-4">
-    <div class="mb-6 text-center border border-gray-600 shadow-2xl p-4">
-      <h2 class="text-xl font-semibold text-white">Account Verified</h2>
-      <p class="text-sm text-gray-400">Please upload your photo URL to get verified.</p>
-      
-      <div class="mt-4">
-        <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Photo URL</label>
-        <input type="url" id="photoUrl" placeholder="Enter your photo URL" 
-               class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
-      </div>
-
-      <div class="mt-4">
-        <button onclick="verifyAccount()" class="w-full text-white bg-gradient-to-r from-green-500 via-green-600 to-green-500 font-extrabold py-2 rounded-sm">
-          Verify Account
-        </button>
-      </div>
-    </div>
-    </div>
-
-       <main class="max-auto px-4 py-10">
-
-     <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
-    <!-- Signup Form -->
     <div class="flex flex-col items-center justify-center mb-4">
       <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
     </div>
@@ -112,12 +88,27 @@
     </form>
 
     <div class="mt-2 text-center">
-      <p class="text-base text-gray-300">Already have an account? 
-        <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium">Login</a>
+      <p class="text-base text-gray-300">Already have an account? 
+        <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium" id="loginLink">Login</a>
       </p>
     </div>
+
+    <!-- Photo URL Input Section -->
+    <div id="photoUrlSection" class="hidden">
+      <h2 class="text-md font-semibold text-white mb-6">Upload Your Profile Photo</h2>
+      <form onsubmit="uploadPhoto(event)">
+        <div class="mb-4">
+          <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
+          <input type="url" id="photoUrl" required placeholder="Enter image URL"
+            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
+        </div>
+        <button type="submit"
+          class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
+          Submit Photo
+        </button>
+      </form>
+    </div>
   </div>
-  </main>
 
   <!-- Firebase Script -->
   <script type="module">
@@ -223,15 +214,31 @@
           }
         }
 
-        // Show Verified Section
-        document.getElementById("verified-section").classList.remove("hidden");
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Sign-up Successful!',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          background: '#1a202c',
+          color: '#fff'
+        });
+
+        // Show the photo URL input section and hide the rest
+        setTimeout(() => {
+          document.querySelector("form").style.display = 'none';
+          document.getElementById("photoUrlSection").classList.remove("hidden");
+        }, 2000);
 
       } catch (error) {
         showError("Signup failed: " + error.message);
       }
     };
 
-    window.verifyAccount = async function () {
+    window.uploadPhoto = async function (event) {
+      event.preventDefault();
       const photoUrl = document.getElementById("photoUrl").value.trim();
 
       if (!photoUrl) {
@@ -239,17 +246,18 @@
         return;
       }
 
-      // Handle the verification process (e.g., save the photo URL to the user's profile)
       try {
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, { photoUrl });
+        await updateDoc(userRef, {
+          photoUrl: photoUrl
+        });
 
         Swal.fire({
           toast: true,
           position: 'top-end',
           icon: 'success',
-          title: 'Account Verified!',
+          title: 'Photo URL Uploaded!',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
@@ -260,8 +268,9 @@
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
+
       } catch (error) {
-        showError("Verification failed: " + error.message);
+        showError("Failed to upload photo URL: " + error.message);
       }
     };
   </script>
