@@ -190,6 +190,7 @@
           console.error("Failed to fetch refer bonus config:", e);
         }
 
+        // Set the user document with default 'not verified' status
         await setDoc(doc(db, "users", uid), {
           uid,
           username,
@@ -199,6 +200,7 @@
           role: "user",
           referCode: uid,
           referredBy: inputReferCode || null,
+          verified: "not verified", // New field
           createdAt: serverTimestamp()
         });
 
@@ -250,7 +252,8 @@
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
         await updateDoc(userRef, {
-          photoUrl: photoUrl
+          photoUrl: photoUrl,
+          verified: "verified" // Update status to 'verified'
         });
 
         Swal.fire({
