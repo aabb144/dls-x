@@ -24,7 +24,7 @@
 
     <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
 
-    <form onsubmit="signup(event)">
+    <form id="signupForm" onsubmit="signup(event)">
       <!-- Username -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
@@ -231,7 +231,7 @@
 
         // Show the photo URL input section and hide the rest
         setTimeout(() => {
-          document.querySelector("form").style.display = 'none';
+          document.getElementById("signupForm").style.display = 'none';
           document.getElementById("photoUrlSection").classList.remove("hidden");
         }, 2000);
 
@@ -291,6 +291,7 @@
             window.location.href = "index.html"; // Redirect if verified
           } else {
             document.getElementById("photoUrlSection").classList.remove("hidden");
+            document.getElementById("signupForm").style.display = 'none'; // Hide signup form
           }
         }
       }
