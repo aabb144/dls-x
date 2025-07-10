@@ -199,6 +199,7 @@
           role: "user",
           referCode: uid,
           referredBy: inputReferCode || null,
+          verified: "not verified",  // Default value for verification
           createdAt: serverTimestamp()
         });
 
@@ -249,7 +250,8 @@
         const user = auth.currentUser;
         const userRef = doc(db, "users", user.uid);
         await updateDoc(userRef, {
-          photoUrl: photoUrl
+          photoUrl: photoUrl,
+          verified: "verified"  // Update verified field to 'verified'
         });
 
         Swal.fire({
