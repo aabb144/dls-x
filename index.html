@@ -115,6 +115,23 @@
 
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data();
+
+          // Check if the account is verified
+          if (userData.verified !== "verified") {
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'warning',
+              title: 'Your account is not verified yet.',
+              showConfirmButton: false,
+              timer: 2500,
+              timerProgressBar: true,
+              background: '#1a202c',
+              color: '#fff'
+            });
+            return;
+          }
+
           Swal.fire({
             toast: true,
             position: 'top-end',
