@@ -187,13 +187,15 @@
 
             document.getElementById("goal-modal-content").innerHTML = `
               <div class="flex flex-col gap-4">
-                <div class="flex flex-col justify-center items-center">
-                  <span class="text-lg font-semibold">${match.team1}</span>
-                  <input type="number" value="${goal1Val}" id="goal1-modal-${key}" class="text-black rounded px-2 py-1 text-center w-20" />
-                </div>
-                <div class="flex flex-col justify-center items-center">
-                  <span class="text-lg font-semibold">${match.team2}</span>
-                  <input type="number" value="${goal2Val}" id="goal2-modal-${key}" class="text-black rounded px-2 py-1 text-center w-20" />
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex flex-col items-center">
+                    <span class="text-lg font-semibold">${match.team1}</span>
+                    <input type="number" value="${goal1Val}" id="goal1-modal-${key}" class="text-black rounded px-2 py-1 text-center w-20" />
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-lg font-semibold">${match.team2}</span>
+                    <input type="number" value="${goal2Val}" id="goal2-modal-${key}" class="text-black rounded px-2 py-1 text-center w-20" />
+                  </div>
                 </div>
               </div>
             `;
