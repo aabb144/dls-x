@@ -19,7 +19,7 @@
   <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
 
     <div class="flex flex-col items-center justify-center mb-4">
-      <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Games</h1>
+      <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
     </div>
 
     <h2 class="text-md font-semibold text-white mb-6">Upload a photo to verify your account</h2>
@@ -30,7 +30,7 @@
         <input type="url" id="photoUrl" required placeholder="Enter image URL"
           class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
       </div>
-      <button type="submit"
+      <button type="button" onclick="checkPhotoUrl()"
         class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
         Verified Account
       </button>
@@ -87,8 +87,7 @@
       });
     };
 
-    window.uploadPhoto = async function (event) {
-      event.preventDefault();
+    window.checkPhotoUrl = function () {
       const photoUrl = document.getElementById("photoUrl").value.trim();
 
       // Show warning if URL is empty
@@ -96,6 +95,13 @@
         showWarning("Please enter a valid photo URL.");
         return;
       }
+
+      // If the URL is not empty, proceed to upload
+      uploadPhoto();
+    };
+
+    window.uploadPhoto = async function () {
+      const photoUrl = document.getElementById("photoUrl").value.trim();
 
       try {
         const user = auth.currentUser;
