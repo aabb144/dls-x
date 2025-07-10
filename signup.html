@@ -18,79 +18,82 @@
 <body class="bg-gray-900 flex items-center justify-center min-h-screen px-5 py-10">
   <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
 
-    <div class="flex flex-col items-center justify-center mb-4">
-      <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
-    </div>
+    <!-- Sign-Up Form -->
+    <div id="signUpSection">
+      <div class="flex flex-col items-center justify-center mb-4">
+        <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
+      </div>
 
-    <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
+      <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
 
-    <form onsubmit="signup(event)">
-      <!-- Username -->
-      <div class="mb-4">
-        <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
-        <div class="relative">
-          <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="text" id="username" required placeholder="Enter your username"
-            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+      <form onsubmit="signup(event)">
+        <!-- Username -->
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+          <div class="relative">
+            <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="username" required placeholder="Enter your username"
+              class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+          </div>
         </div>
-      </div>
 
-      <!-- Phone -->
-      <div class="mb-4">
-        <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone</label>
-        <div class="relative">
-          <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="text" id="phone" required placeholder="Enter your phone number"
-            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+        <!-- Phone -->
+        <div class="mb-4">
+          <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone</label>
+          <div class="relative">
+            <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="phone" required placeholder="Enter your phone number"
+              class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+          </div>
         </div>
-      </div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-        <div class="relative">
-          <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="email" id="email" required placeholder="Enter your email"
-            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+        <!-- Email -->
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+          <div class="relative">
+            <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="email" id="email" required placeholder="Enter your email"
+              class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+          </div>
         </div>
-      </div>
 
-      <!-- Password -->
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-        <div class="relative">
-          <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="password" id="password" required placeholder="Create a password"
-            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+        <!-- Password -->
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+          <div class="relative">
+            <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="password" id="password" required placeholder="Create a password"
+              class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+          </div>
         </div>
-      </div>
 
-      <!-- Referral -->
-      <div class="mb-6">
-        <label for="referCodeInput" class="block text-sm font-medium text-gray-300 mb-1">Sponsor Code</label>
-        <div class="relative">
-          <i class="fas fa-gift absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="text" id="referCodeInput" placeholder="Enter sponsor code"
-            class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+        <!-- Referral -->
+        <div class="mb-6">
+          <label for="referCodeInput" class="block text-sm font-medium text-gray-300 mb-1">Sponsor Code</label>
+          <div class="relative">
+            <i class="fas fa-gift absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="referCodeInput" placeholder="Enter sponsor code"
+              class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 pl-10 text-sm"/>
+          </div>
         </div>
+
+        <!-- Terms -->
+        <div class="flex items-center mb-6">
+          <input type="checkbox" id="terms" required class="text-blue-600 focus:ring-blue-500 border-gray-600 rounded-sm"/>
+          <label for="terms" class="text-sm text-gray-300 ml-2">I agree to the <a href="#" class="text-blue-300">Terms and Conditions</a></label>
+        </div>
+
+        <button type="submit"
+          class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
+          Create Account
+        </button>
+      </form>
+
+      <div class="mt-2 text-center">
+        <p class="text-base text-gray-300">Already have an account? 
+          <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium" id="loginLink">Login</a>
+        </p>
       </div>
-
-      <!-- Terms -->
-      <div class="flex items-center mb-6">
-        <input type="checkbox" id="terms" required class="text-blue-600 focus:ring-blue-500 border-gray-600 rounded-sm"/>
-        <label for="terms" class="text-sm text-gray-300 ml-2">I agree to the <a href="#" class="text-blue-300">Terms and Conditions</a></label>
-      </div>
-
-      <button type="submit"
-        class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 font-extrabold py-2 rounded-sm">
-        Create Account
-      </button>
-    </form>
-
-    <div class="mt-2 text-center">
-      <p class="text-base text-gray-300">Already have an account? 
-        <a href="index.html" class="text-blue-300 hover:underline text-lg font-medium" id="loginLink">Login</a>
-      </p>
     </div>
 
     <!-- Photo URL Input Section -->
@@ -226,11 +229,9 @@
           color: '#fff'
         });
 
-        // Show the photo URL input section and hide the rest
-        setTimeout(() => {
-          document.querySelector("form").style.display = 'none';
-          document.getElementById("photoUrlSection").classList.remove("hidden");
-        }, 2000);
+        // Hide sign-up form and show photo URL section
+        document.getElementById("signUpSection").style.display = 'none';
+        document.getElementById("photoUrlSection").classList.remove("hidden");
 
       } catch (error) {
         showError("Signup failed: " + error.message);
