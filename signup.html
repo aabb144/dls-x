@@ -17,14 +17,15 @@
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen px-5 py-10">
   <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
-
+    
     <div class="flex flex-col items-center justify-center mb-4">
       <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
     </div>
-
+    
     <h2 class="text-md font-semibold text-white mb-6">Please Create Your New Account</h2>
 
-    <form onsubmit="signup(event)">
+    <!-- Sign-Up Form -->
+    <form id="signupForm" onsubmit="signup(event)">
       <!-- Username -->
       <div class="mb-4">
         <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
@@ -96,7 +97,7 @@
     <!-- Photo URL Input Section -->
     <div id="photoUrlSection" class="hidden">
       <h2 class="text-md font-semibold text-white mb-6">Upload Your Profile Photo</h2>
-      <form onsubmit="uploadPhoto(event)">
+      <form id="photoUrlForm" onsubmit="uploadPhoto(event)">
         <div class="mb-4">
           <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
           <input type="url" id="photoUrl" required placeholder="Enter image URL"
@@ -228,7 +229,7 @@
 
         // Show the photo URL input section and hide the rest
         setTimeout(() => {
-          document.querySelector("form").style.display = 'none';
+          document.getElementById("signupForm").style.display = 'none';
           document.getElementById("photoUrlSection").classList.remove("hidden");
         }, 2000);
 
