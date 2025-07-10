@@ -108,6 +108,7 @@
         </button>
       </form>
     </div>
+
   </div>
 
   <!-- Firebase Script -->
@@ -268,6 +269,7 @@
           color: '#fff'
         });
 
+        // Redirect to index.html after verification
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
@@ -276,6 +278,24 @@
         showError("Failed to upload photo URL: " + error.message);
       }
     };
+
+    // Check verification status and display accordingly
+    window.onload = async function() {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const verifiedStatus = userDoc.data().verified;
+          if (verifiedStatus === "verified") {
+            window.location.href = "index.html"; // Redirect if verified
+          } else {
+            document.getElementById("photoUrlSection").classList.remove("hidden");
+          }
+        }
+      }
+    };
+
   </script>
 </body>
 </html>
