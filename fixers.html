@@ -67,7 +67,7 @@
 
     let teamPhotos = {};
     let fixersDocs = {};
-    let currentKey = null; // Store the current key of the match being updated
+    let currentKey = null; // Store the current match key for updates
 
     async function loadTeamPhotos() {
       const snap = await getDocs(collection(db, "playersform"));
@@ -156,13 +156,13 @@
 
             html += `
               <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
-                <p class="text-center text-lg text-yellow-400 mb-6">Khelo DLS Tournament 2025 <i class="fa-solid fa-cloud-arrow-up" onclick="showGoalModal('${key}', '${t1GoalVal}', '${t2GoalVal}')"></i></p>
+                <p class="text-center text-lg text-yellow-400 mb-6">Khelo DLS Tournament 2025 <i class="fa-solid fa-cloud-arrow-up cursor-pointer" onclick="showGoalModal('${key}', '${t1GoalVal}', '${t2GoalVal}')"></i></p>
                 <div class="text-center text-gray-400 mb-1 text-md">${matchDateAndTime}</div> <!-- Updated date and time -->
                 <div class="flex justify-center items-center gap-3 font-semibold text-white">
                   <div class="flex flex-col items-center gap-1 flex-1 justify-end">
                     ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
                     <span>${match.team1}</span>
-                    <input type="text" inputmode="numeric" placeholder="0" id="goal1-${key}" value="${t1GoalVal}" class="mt-1 w-16 text-black rounded px-1 py-0.5 text-center text-sm goal-input" />
+                    <span>${t1GoalVal}</span>
                   </div>
 
                   <div class="text-yellow-400 font-bold text-2xl select-none">VS</div>
@@ -170,11 +170,8 @@
                   <div class="flex flex-col items-center gap-1 flex-1 justify-start">
                     ${team2Img ? `<img src="${team2Img}" class="w-10 h-10 rounded-full" alt="${match.team2}" />` : ""}
                     <span>${match.team2}</span>
-                    <input type="text" inputmode="numeric" placeholder="0" id="goal2-${key}" value="${t2GoalVal}" class="mt-1 w-16 text-black rounded px-1 py-0.5 text-center text-sm goal-input" />
+                    <span>${t2GoalVal}</span>
                   </div>
-                </div>
-                <div class="text-center">
-                  <button data-key="${key}" class="update-goal-btn bg-yellow-400 text-black font-semibold px-3 py-1 rounded hover:bg-yellow-300 transition duration-200">Update</button>
                 </div>
               </div>
             `;
@@ -182,45 +179,6 @@
         });
 
         fixersContainer.innerHTML = html;
-
-        // Convert input to English digits only
-        document.querySelectorAll(".goal-input").forEach(input => {
-          input.addEventListener("input", () => {
-            input.value = convertBanglaToEnglish(input.value.replace(/[^০-৯0-9]/g, ''));
-          });
-        });
-
-        document.querySelectorAll(".update-goal-btn").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const key = e.currentTarget.getAttribute("data-key");
-            const goal1Input = document.getElementById(`goal1-${key}`);
-            const goal2Input = document.getElementById(`goal2-${key}`);
-
-            let goal1 = convertBanglaToEnglish(goal1Input.value);
-            let goal2 = convertBanglaToEnglish(goal2Input.value);
-
-            goal1 = goal1 === "" ? null : Number(goal1);
-            goal2 = goal2 === "" ? null : Number(goal2);
-
-            if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
-              Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-              return;
-            }
-
-            const docRef = fixersDocs[key];
-            if (!docRef) {
-              Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-              return;
-            }
-
-            await updateDoc(docRef, {
-              team1Goal: goal1,
-              team2Goal: goal2,
-            });
-
-            Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-          });
-        });
       });
     }
 
