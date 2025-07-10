@@ -223,11 +223,33 @@
           }
         }
 
+        // Show Verified Section
+        document.getElementById("verified-section").classList.remove("hidden");
+
+      } catch (error) {
+        showError("Signup failed: " + error.message);
+      }
+    };
+
+    window.verifyAccount = async function () {
+      const photoUrl = document.getElementById("photoUrl").value.trim();
+
+      if (!photoUrl) {
+        showError("Please enter a valid photo URL.");
+        return;
+      }
+
+      // Handle the verification process (e.g., save the photo URL to the user's profile)
+      try {
+        const user = auth.currentUser;
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, { photoUrl });
+
         Swal.fire({
           toast: true,
           position: 'top-end',
           icon: 'success',
-          title: 'Sign-up Successful!',
+          title: 'Account Verified!',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
@@ -238,9 +260,8 @@
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
-
       } catch (error) {
-        showError("Signup failed: " + error.message);
+        showError("Verification failed: " + error.message);
       }
     };
   </script>
