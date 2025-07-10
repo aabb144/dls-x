@@ -18,6 +18,25 @@
 <body class="bg-gray-900 flex items-center justify-center min-h-screen px-5 py-10">
   <div class="bg-gradient-to-tl from-gray-900 via-gray-900 p-5 rounded-sm shadow-lg w-full max-w-sm border border-gray-600 shadow-2xl">
 
+    <!-- Verified Section -->
+    <div class="mb-6 text-center">
+      <h2 class="text-xl font-semibold text-white">Account Verified</h2>
+      <p class="text-sm text-gray-400">Please upload your photo URL to get verified.</p>
+      
+      <div class="mt-4">
+        <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Photo URL</label>
+        <input type="url" id="photoUrl" placeholder="Enter your photo URL" 
+               class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
+      </div>
+
+      <div class="mt-4">
+        <button onclick="verifyAccount()" class="w-full text-white bg-gradient-to-r from-green-500 via-green-600 to-green-500 font-extrabold py-2 rounded-sm">
+          Verify Account
+        </button>
+      </div>
+    </div>
+
+    <!-- Signup Form -->
     <div class="flex flex-col items-center justify-center mb-4">
       <h1 style="font-family: 'Audiowide', cursive;" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Dls</h1>
     </div>
