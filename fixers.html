@@ -156,7 +156,9 @@
 
             html += `
               <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
-                <p class="text-center text-lg text-yellow-400 mb-6">Khelo DLS Tournament 2025 <i class="fa-solid fa-cloud-arrow-up cursor-pointer" onclick="showGoalModal('${key}', '${t1GoalVal}', '${t2GoalVal}')"></i></p>
+                <p class="text-center text-lg text-yellow-400 mb-6">Khelo DLS Tournament 2025 
+                  <div id="goal-icon-${key}" class="fa-solid fa-cloud-arrow-up cursor-pointer text-yellow-400 hover:text-white" onclick="showGoalModal('${key}', '${t1GoalVal}', '${t2GoalVal}')"></div>
+                </p>
                 <div class="text-center text-gray-400 mb-1 text-md">${matchDateAndTime}</div> <!-- Updated date and time -->
                 <div class="flex justify-center items-center gap-3 font-semibold text-white">
                   <div class="flex flex-col items-center gap-1 flex-1 justify-end">
