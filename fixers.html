@@ -75,12 +75,14 @@
       return str.replace(/[০-৯]/g, digit => map[digit]);
     }
 
-    function formatDate(dateStr) {
+    function formatDateAndTime(dateStr) {
       const date = new Date(dateStr);
       const day = date.getDate();
       const month = date.toLocaleString('default', { month: 'long' });
       const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `Date: ${day}-${month}-${year} Time: ${hours}:${minutes}`;
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -128,7 +130,7 @@
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
           matches.forEach((match, idx) => {
-            const matchDate = formatDate(addDays(baseDate, idx));  // Updated date format
+            const matchDateAndTime = formatDateAndTime(addDays(baseDate, idx));  // Updated date & time format
             const team1Img = teamPhotos[match.team1.trim().toLowerCase()] || "";
             const team2Img = teamPhotos[match.team2.trim().toLowerCase()] || "";
 
@@ -139,7 +141,7 @@
             html += `
               <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
                 <p class="text-center text-lg text-yellow-400 mb-6">Khelo DLS Tournament 2025</p>
-                <div class="text-center text-gray-400 mb-1 text-md">${matchDate}</div> <!-- Updated date format -->
+                <div class="text-center text-gray-400 mb-1 text-md">${matchDateAndTime}</div> <!-- Updated date and time -->
                 <div class="flex justify-center items-center gap-3 font-semibold text-white">
                   <div class="flex flex-col items-center gap-1 flex-1 justify-end">
                     ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
