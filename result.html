@@ -70,18 +70,18 @@
   <!-- Firebase & Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-  authDomain: "dls12364.firebaseapp.com",
-  projectId: "dls12364",
-  storageBucket: "dls12364.firebasestorage.app",
-  messagingSenderId: "431397971734",
-  appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-  measurementId: "G-B75EB4GGRV"
-};
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -105,9 +105,14 @@
         }
 
         let count = 1;
-        snapshot.forEach((doc) => {
+        snapshot.forEach(async (doc) => {
           const data = doc.data();
           const photo = data.photoUrl && data.photoUrl.trim() !== "" ? data.photoUrl : "https://via.placeholder.com/100?text=No+Image";
+
+          // Fetch username from 'users' collection based on the player's UID
+          const userDocRef = doc(db, "users", data.uid);
+          const userDoc = await getDoc(userDocRef);
+          const username = userDoc.exists() ? userDoc.data().username : "No Username";
 
           const card = `
             <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex items-center gap-4 hover:scale-[1.02] transition-transform duration-300">
@@ -116,7 +121,7 @@
                 <span class="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full shadow">${count}</span>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-yellow-300">${data.fullName || "No Name"}</h2>
+                <h2 class="text-xl font-bold text-yellow-300">${username}</h2>
                 <p class="text-gray-300">Team: <span class="text-white">${data.team || "N/A"}</span></p>
                 <p class="text-gray-300">DLS Rating: <span class="text-green-400">${data.dlsRating ?? "N/A"}</span></p>
                 <p class="text-gray-300">Age: <span class="text-white">${data.age ?? "N/A"}</span></p>
