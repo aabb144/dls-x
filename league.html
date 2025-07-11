@@ -87,7 +87,7 @@
   <!-- Firebase Scripts -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -138,6 +138,20 @@
       }
     }
 
+    async function checkUserRegistration(uid) {
+      const playersCol = collection(db, "playersform");
+      const q = query(playersCol, where("uid", "==", uid));
+      const snapshot = await getDocs(q);
+      return snapshot.size > 0; // returns true if the user is already registered
+    }
+
+    async function checkTeamNameExistence(teamName) {
+      const playersCol = collection(db, "playersform");
+      const q = query(playersCol, where("team", "==", teamName));
+      const snapshot = await getDocs(q);
+      return snapshot.size > 0; // returns true if the team name is already taken
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "login.html";
@@ -173,10 +187,33 @@
         return;
       }
 
+      const isAlreadyRegistered = await checkUserRegistration(currentUser.uid);
+      if (isAlreadyRegistered) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Already Registered',
+          text: 'You have already registered.',
+          confirmButtonColor: '#EF4444'
+        });
+        return;
+      }
+
       const team = form['team'].value.trim();
       const dlsRating = parseFloat(form['dls-rating'].value);
       const age = Number(form['age'].value);
       const yearsPlayed = Number(form['years-played'].value);
+
+      // Check if team name already exists
+      const isTeamNameTaken = await checkTeamNameExistence(team);
+      if (isTeamNameTaken) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Team Name Taken',
+          text: 'This team name is already registered. Please choose a different name.',
+          confirmButtonColor: '#EF4444'
+        });
+        return;
+      }
 
       try {
         // Run transaction to add player and decrement limit atomically
