@@ -152,6 +152,19 @@
       return snapshot.size > 0; // returns true if the team name is already taken
     }
 
+    async function getUserInfo(uid) {
+      const userDocRef = doc(db, "users", uid);
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        return {
+          username: userData.username,
+          photoUrl: userData.photoUrl
+        };
+      }
+      return { username: "", photoUrl: "" };
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "login.html";
@@ -215,6 +228,9 @@
         return;
       }
 
+      // Get user info
+      const { username, photoUrl } = await getUserInfo(currentUser.uid);
+
       try {
         // Run transaction to add player and decrement limit atomically
         await runTransaction(db, async (transaction) => {
@@ -241,6 +257,8 @@
             age,
             yearsPlayed,
             uid: currentUser?.uid || null,
+            username,
+            photoUrl,
             createdAt: new Date()
           });
 
