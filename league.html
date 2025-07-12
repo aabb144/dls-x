@@ -3,91 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Player Registration</title>
+  <title>Match Fixers</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white min-h-screen">
 
   <!-- Header -->
-  <header class="bg-black w-full max-w-md mx-auto py-3 px-4 border-b border-gray-800 flex justify-between items-center">
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black w-full max-w-md shadow-md py-2 px-3 mb-3 mx-auto border-b border-gray-700 flex items-center justify-between rounded-b-xl">
     <div class="flex items-center gap-2">
-      <div class="bg-yellow-600 bg-opacity-30 border border-yellow-400 text-yellow-300 w-9 h-9 flex items-center justify-center font-bold rounded-full">KG</div>
-      <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Games</h2>
+      <div class="bg-red-600 bg-opacity-50 border border-red-500 text-red-300 w-9 h-9 flex items-center justify-center font-bold rounded-full shadow">FX</div>
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-red-400 via-yellow-300 to-red-400 bg-clip-text text-transparent">Fixers</h2>
     </div>
-    <div class="flex items-center gap-4">
-      <i class="fa-solid fa-headset text-xl text-yellow-300"></i>
-      <i class="fa-solid fa-ellipsis-vertical cursor-pointer text-yellow-300"></i>
+    <div class="flex items-center gap-1 bg-gradient-to-br from-red-500 via-yellow-700 to-red-500 text-black px-2 py-1 rounded-full shadow-lg border border-yellow-200 h-[29px]">
+      <i class="fa-solid fa-users text-white text-sm"></i>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="w-full max-w-md mt-8 px-4 mx-auto">
-    <div class="bg-gray-900 p-3 rounded-lg shadow-xl border border-gray-700">
-      <h1 class="text-center text-2xl font-semibold text-yellow-400 mb-2">Player Registration Form</h1>
-
-      <!-- Current Limit Display -->
-      <p id="currentLimitDisplay" class="text-center text-yellow-300 mb-6 font-medium">Loading current limit...</p>
-
-      <form class="space-y-6" id="registration-form">
-        <input type="text" id="team" name="team" required placeholder="Enter your DLS team name" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" step="any" id="dls-rating" name="dls-rating" required placeholder="Enter your DLS rating" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" id="age" name="age" required placeholder="Enter your age" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" id="years-played" name="years-played" required placeholder="How many years have you played DLS" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Register</button>
-      </form>
+  <!-- Fixers List -->
+  <main class="max-w-3xl mx-auto px-4 mt-6 mb-20">
+    <div id="fixers-list" class="space-y-6">
+      <p class="text-center text-gray-400">Loading...</p>
     </div>
   </main>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 z-10">
-    <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-        <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
+  <!-- Goal Update Modal -->
+  <div id="goal-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+      <div class="text-center text-yellow-400 text-xl mb-4">Update Goals</div>
+      <div id="goal-modal-content"></div>
+      <div class="flex justify-between mt-4">
+        <button id="close-modal" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400">Cancel</button>
+        <button id="save-goals" class="bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-300">Save</button>
       </div>
-      Home
-    </a>
+    </div>
+  </div>
 
-    <a href="result.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-        <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
-      </div>
-      Result
-    </a>
-
-    <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-        <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
-      </div>
-      League
-    </a>
-
-    <a href="match-history.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-        <i class="fa-solid fa-clock-rotate-left text-lg text-gray-300 hover:text-yellow-400"></i>
-      </div>
-      History
-    </a>
-
-    <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
-        <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
-      </div> 
-      Profile
-    </a>
-  </nav>
-
-  <!-- Firebase Scripts -->
+  <!-- Firebase & Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -104,201 +60,187 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let currentUser = null;
-    let currentLimit = null;
+    let teamPhotos = {};
+    let fixersDocs = {};
 
-    const currentLimitDisplay = document.getElementById('currentLimitDisplay');
-
-    async function loadPlayerLimit() {
-      const limitDocRef = doc(db, "settings", "limits");
-      try {
-        const docSnap = await getDoc(limitDocRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          currentLimit = data?.maxPlayers ?? null;
-          currentLimitDisplay.textContent = currentLimit !== null ? `Current Registration Limit: ${currentLimit}` : "Current Player Limit: Not Set";
-        } else {
-          currentLimit = null;
-          currentLimitDisplay.textContent = "Current Registration Limit: Not Set";
+    async function loadTeamPhotos() {
+      const snap = await getDocs(collection(db, "playersform"));
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.team && data.photoUrl) {
+          teamPhotos[data.team.trim().toLowerCase()] = data.photoUrl;
         }
-      } catch (error) {
-        console.error("Error fetching player limit:", error);
-        currentLimitDisplay.textContent = "Problem loading limit";
-      }
+      });
     }
 
-    async function countRegisteredPlayers() {
-      try {
-        const playersCol = collection(db, "playersform");
-        const snapshot = await getDocs(playersCol);
-        return snapshot.size;
-      } catch (error) {
-        console.error("Error counting players:", error);
-        return 0;
-      }
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
     }
 
-    async function checkUserRegistration(uid) {
-      const playersCol = collection(db, "playersform");
-      const q = query(playersCol, where("uid", "==", uid));
-      const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the user is already registered
+    function convertBanglaToEnglish(str) {
+      const map = {
+        '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+        '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9'
+      };
+      return str.replace(/[০-৯]/g, digit => map[digit]);
     }
 
-    async function checkTeamNameExistence(teamName) {
-      const playersCol = collection(db, "playersform");
-      const q = query(playersCol, where("team", "==", teamName));
-      const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the team name is already taken
-    }
-
-    async function getUserInfo(uid) {
-      const userDocRef = doc(db, "users", uid);
-      const docSnap = await getDoc(userDocRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        return {
-          username: userData.username,
-          photoUrl: userData.photoUrl
-        };
-      }
-      return { username: "", photoUrl: "" };
+    function formatDateAndTime(dateStr) {
+      const date = new Date(dateStr);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'long' });
+      const year = date.getFullYear();
+      return `Date: ${day}-${month}-${year} Time: 24 Hours`;
     }
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        currentUser = user;
-        await loadPlayerLimit();
+      if (user) {
+        await loadTeamPhotos();
+        loadFixers();
       }
     });
 
-    const form = document.getElementById('registration-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    function loadFixers() {
+      const fixersRef = collection(db, "fixers");
+      onSnapshot(query(fixersRef), (snapshot) => {
+        const fixersContainer = document.getElementById("fixers-list");
 
-      if (currentLimit === null || currentLimit <= 0) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Registration limit is 0 or not set, you cannot register at this time.',
-          confirmButtonColor: '#EF4444'
-        });
-        return;
-      }
-
-      const registeredCount = await countRegisteredPlayers();
-
-      if (registeredCount >= currentLimit) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Limit Reached',
-          text: `Sorry, the maximum player registration limit (${currentLimit}) has been reached.`,
-          confirmButtonColor: '#F59E0B'
-        });
-        return;
-      }
-
-      const isAlreadyRegistered = await checkUserRegistration(currentUser.uid);
-      if (isAlreadyRegistered) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Already Registered',
-          text: 'You have already registered.',
-          confirmButtonColor: '#EF4444'
-        });
-        return;
-      }
-
-      const team = form['team'].value.trim();
-      const dlsRating = parseFloat(form['dls-rating'].value);
-      const age = Number(form['age'].value);
-      const yearsPlayed = Number(form['years-played'].value);
-
-      // Check if team name already exists
-      const isTeamNameTaken = await checkTeamNameExistence(team);
-      if (isTeamNameTaken) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Team Name Taken',
-          text: 'This team name is already registered. Please choose a different name.',
-          confirmButtonColor: '#EF4444'
-        });
-        return;
-      }
-
-      // Get user info
-      const { username, photoUrl } = await getUserInfo(currentUser.uid);
-
-      try {
-        // Run transaction to add player and decrement limit atomically
-        await runTransaction(db, async (transaction) => {
-          const limitDocRef = doc(db, "settings", "limits");
-          const limitDoc = await transaction.get(limitDocRef);
-
-          if (!limitDoc.exists()) {
-            throw "Limit document does not exist!";
-          }
-
-          const limitData = limitDoc.data();
-          const maxPlayers = limitData.maxPlayers ?? 0;
-
-          if (maxPlayers <= 0) {
-            throw "Player limit exceeded!";
-          }
-
-          // Add new player doc
-          const playersCol = collection(db, "playersform");
-          const newPlayerRef = doc(playersCol); // create new doc ref
-          transaction.set(newPlayerRef, {
-            team,
-            dlsRating,
-            age,
-            yearsPlayed,
-            uid: currentUser?.uid || null,
-            username,
-            photoUrl,
-            createdAt: new Date()
-          });
-
-          // Decrement maxPlayers by 1
-          transaction.update(limitDocRef, {
-            maxPlayers: maxPlayers - 1
-          });
-
-          // Update local currentLimit to reflect new value
-          currentLimit = maxPlayers - 1;
-          currentLimitDisplay.textContent = `Current Player Limit: ${currentLimit}`;
-        });
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Your registration has been completed!',
-          confirmButtonColor: '#F59E0B'
-        });
-        form.reset();
-      } catch (error) {
-        let msg = "";
-        if (typeof error === "string") {
-          msg = error;
-        } else if (error instanceof Error) {
-          msg = error.message;
-        } else {
-          msg = "There was an issue with registration. Please try again.";
+        if (snapshot.empty) {
+          fixersContainer.innerHTML = `<p class="text-center text-gray-400">No fixers available.</p>`;
+          return;
         }
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: msg,
-          confirmButtonColor: '#EF4444'
-        });
-        console.error("Transaction error:", error);
-      }
-    });
-  </script>
+        const fixers = [];
+        fixersDocs = {};
 
+        snapshot.forEach(docSnap => {
+          fixers.push(docSnap.data());
+          const d = docSnap.data();
+          const key = `${d.team1}__${d.team2}__${d.date}`;
+          fixersDocs[key] = docSnap.ref;
+        });
+
+        const fixersByDate = {};
+        fixers.forEach(fix => {
+          const key = fix.date;
+          if (!fixersByDate[key]) fixersByDate[key] = [];
+          fixersByDate[key].push(fix);
+        });
+
+        const sortedDates = Object.keys(fixersByDate).sort();
+        const baseDate = sortedDates[0];
+        let html = "";
+
+        sortedDates.forEach((date, groupIndex) => {
+          const groupName = String.fromCharCode(65 + groupIndex);
+          html += `<div class="text-lg font-semibold text-yellow-400 mb-2">Group ${groupName}</div>`;
+
+          const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          matches.forEach((match, idx) => {
+            const matchDateAndTime = formatDateAndTime(addDays(baseDate, idx));  // Updated date & time format
+            const team1Img = teamPhotos[match.team1.trim().toLowerCase()] || "";
+            const team2Img = teamPhotos[match.team2.trim().toLowerCase()] || "";
+
+            const key = `${match.team1}__${match.team2}__${match.date}`;
+            const t1GoalVal = (match.team1Goal ?? "").toString();
+            const t2GoalVal = (match.team2Goal ?? "").toString();
+
+            html += `
+              <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
+                <div class="flex items-center justify-between space-x-3">
+                  <p class="text-sm font-semibold uppercase">Khelo DLS Tournament 2025</p>
+                  <p data-key="${key}" class="open-goal-modal-btn bg-gray-800 py-1 px-2 rounded-lg text-white flex items-center justify-center">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm animate-pulse"></i>
+                  </p>
+                </div>
+                <div class="text-center text-gray-400 mb-1 text-md">${matchDateAndTime}</div>
+                <div class="flex justify-center items-center gap-3 font-semibold text-white">
+                  <div class="flex flex-col items-center gap-1 flex-1 justify-end">
+                    ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
+                    <span>${match.team1}</span>
+                  </div>
+
+                  <div class="text-yellow-400 font-bold text-2xl select-none">VS</div>
+
+                  <div class="flex flex-col items-center gap-1 flex-1 justify-start">
+                    ${team2Img ? `<img src="${team2Img}" class="w-10 h-10 rounded-full" alt="${match.team2}" />` : ""}
+                    <span>${match.team2}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        });
+
+        fixersContainer.innerHTML = html;
+
+        document.querySelectorAll(".open-goal-modal-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const key = e.currentTarget.getAttribute("data-key");
+            const match = fixers.find(f => `${f.team1}__${f.team2}__${f.date}` === key);
+
+            const goal1Val = (match.team1Goal ?? "").toString();
+            const goal2Val = (match.team2Goal ?? "").toString();
+
+            document.getElementById("goal-modal-content").innerHTML = `
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex flex-col items-center">
+                    <span class="text-lg font-semibold">${match.team1}</span>
+                    <input type="number" value="${goal1Val}" id="goal1-modal-${key}" class="text-black rounded px-2 py-1 text-center w-24" />
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-lg font-semibold">${match.team2}</span>
+                    <input type="number" value="${goal2Val}" id="goal2-modal-${key}" class="text-black rounded px-2 py-1 text-center w-24" />
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Show the modal
+            document.getElementById("goal-modal").classList.remove("hidden");
+
+            // Handle close modal
+            document.getElementById("close-modal").addEventListener("click", () => {
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
+
+            // Handle save goals
+            document.getElementById("save-goals").addEventListener("click", async () => {
+              let goal1 = document.getElementById(`goal1-modal-${key}`).value;
+              let goal2 = document.getElementById(`goal2-modal-${key}`).value;
+
+              goal1 = goal1 === "" ? null : Number(goal1);
+              goal2 = goal2 === "" ? null : Number(goal2);
+
+              if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
+                Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              const docRef = fixersDocs[key];
+              if (!docRef) {
+                Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              await updateDoc(docRef, {
+                team1Goal: goal1,
+                team2Goal: goal2,
+              });
+
+              Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+
+              // Close the modal after saving
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
+          });
+        });
+      });
+    }
+  </script>
 </body>
 </html>
