@@ -41,7 +41,7 @@
   <div id="loadingOverlay" class="fixed inset-0 bg-black flex items-center justify-center z-50">
     <div class="text-center">
       <div class="loader mx-auto mb-4"></div>
-      <h1 class="text-2xl font-bold animate-pulse bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Good Job</h1>
+      <h1 class="text-2xl font-bold animate-pulse bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Khelo Dls</h1>
       <p class="text-gray-400 text-xs">Loading...</p>
     </div>
   </div>
@@ -61,8 +61,7 @@
   </header>
 
   <main class="max-w-xl mx-auto px-4 py-3 mb-20">
-    <h1 class="text-2xl font-bold mb-6 text-center text-yellow-400">💰 Deposit Balance</h1>
-
+    
     <form id="depositForm" class="bg-gray-900 p-6 rounded-2xl shadow-lg border border-gray-700 space-y-4">
       <div>
         <p class="block text-sm font-medium text-gray-400 mb-1">Select Method</p>
@@ -72,9 +71,6 @@
           </div>
           <div data-method="Nagad" class="method-option flex-1 border border-gray-600 rounded-lg px-4 py-3 text-center cursor-pointer transition hover:border-blue-500 text-white">
             <i class="fas fa-wallet"></i><span class="ml-2">Nagad</span>
-          </div>
-          <div data-method="USDT" class="method-option flex-1 border border-gray-600 rounded-lg px-4 py-3 text-center cursor-pointer transition hover:border-blue-500 text-white">
-            <i class="fas fa-coins"></i><span class="ml-2">USDT</span>
           </div>
         </div>
         <input type="hidden" id="depositMethod" name="depositMethod" value="">
@@ -97,16 +93,6 @@
 
       <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition">Submit Deposit Request</button>
     </form>
-
-    <section class="mt-6 bg-yellow-900 bg-opacity-20 border-l-4 border-yellow-400 p-4 rounded-xl shadow-sm">
-      <h2 class="font-semibold text-yellow-300 mb-2"><i class="fas fa-exclamation-circle mr-2"></i>Important Notes:</h2>
-      <ul class="text-sm text-yellow-200 list-disc pl-5 space-y-1">
-        <li>If the transfer time is up, please fill out the deposit form again.</li>
-        <li>The transfer amount must match the order you created, otherwise the money cannot be credited successfully.</li>
-        <li>If you transfer the wrong amount, our company will not be responsible for the lost amount!</li>
-        <li><strong>Note:</strong> Do not cancel the deposit order after the money has been transferred.</li>
-      </ul>
-    </section>
   </main>
 
   <!-- Bottom Navigation -->
