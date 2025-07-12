@@ -3,50 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Player Registration</title>
+  <title>Player List</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white min-h-screen">
 
   <!-- Header -->
-  <header class="bg-black w-full max-w-md mx-auto py-3 px-4 border-b border-gray-800 flex justify-between items-center">
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black w-full max-w-md shadow-md py-2 px-3 mb-3 mx-auto border-b border-gray-700 flex items-center justify-between header-glow rounded-b-xl">
     <div class="flex items-center gap-2">
-      <div class="bg-yellow-600 bg-opacity-30 border border-yellow-400 text-yellow-300 w-9 h-9 flex items-center justify-center font-bold rounded-full">KG</div>
-      <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent">Khelo Games</h2>
+      <div class="bg-yellow-600 bg-opacity-50 border border-yellow-500 text-yellow-300 w-9 h-9 flex items-center justify-center font-bold rounded-full shadow" style="font-family: 'Audiowide', cursive;">KD</div>
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Khelo DLS</h2>
     </div>
-    <div class="flex items-center gap-4">
-      <i class="fa-solid fa-headset text-xl text-yellow-300"></i>
-      <i class="fa-solid fa-ellipsis-vertical cursor-pointer text-yellow-300"></i>
+    <div style="height: 29px;" class="flex items-center gap-1 bg-gradient-to-br from-yellow-500 via-yellow-700 to-yellow-500 text-black px-1 py-1 rounded-full shadow-lg border border-yellow-200">
+      <div class="w-6 h-6 rounded-full bg-black bg-opacity-20 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
+      </div>
+      <p id="mainBalance" style="font-family: 'Audiowide', cursive;" class="text-xl font-bold text-white">0</p>
+      <button class="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-black text-sm"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="w-full max-w-md mt-8 px-4 mx-auto">
-    <div class="bg-gray-900 p-3 rounded-lg shadow-xl border border-gray-700">
-      <h1 class="text-center text-2xl font-semibold text-yellow-400 mb-2">Player Registration Form</h1>
-
-      <!-- Current Limit Display -->
-      <p id="currentLimitDisplay" class="text-center text-yellow-300 mb-6 font-medium">Loading current limit...</p>
-
-      <form class="space-y-6" id="registration-form">
-        <input type="text" id="team" name="team" required placeholder="Enter your DLS team name" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" step="any" id="dls-rating" name="dls-rating" required placeholder="Enter your DLS rating" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" id="age" name="age" required placeholder="Enter your age" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <input type="number" id="years-played" name="years-played" required placeholder="How many years have you played DLS" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-
-        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Register</button>
-      </form>
+  <!-- Players List -->
+  <main class="max-w-3xl mx-auto px-4 mt-6 mb-20">
+    <div id="players-list" class="space-y-4">
+      <p class="text-center text-gray-400">Loading...</p>
     </div>
   </main>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Bottom Navigation -->
   <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 z-10">
     <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
       <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
@@ -54,28 +41,24 @@
       </div>
       Home
     </a>
-
     <a href="result.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
       <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       Result
     </a>
-
     <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
       <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       League
     </a>
-
-    <a href="match-history.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+    <a href="fixers.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
       <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-clock-rotate-left text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
-      History
+      Fixers
     </a>
-
     <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
       <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
         <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
@@ -84,10 +67,10 @@
     </a>
   </nav>
 
-  <!-- Firebase Scripts -->
+  <!-- Firebase & Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -104,199 +87,47 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let currentUser = null;
-    let currentLimit = null;
+    const playersList = document.getElementById("players-list");
 
-    const currentLimitDisplay = document.getElementById('currentLimitDisplay');
-
-    async function loadPlayerLimit() {
-      const limitDocRef = doc(db, "settings", "limits");
-      try {
-        const docSnap = await getDoc(limitDocRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          currentLimit = data?.maxPlayers ?? null;
-          currentLimitDisplay.textContent = currentLimit !== null ? `Current Registration Limit: ${currentLimit}` : "Current Player Limit: Not Set";
-        } else {
-          currentLimit = null;
-          currentLimitDisplay.textContent = "Current Registration Limit: Not Set";
-        }
-      } catch (error) {
-        console.error("Error fetching player limit:", error);
-        currentLimitDisplay.textContent = "Problem loading limit";
-      }
-    }
-
-    async function countRegisteredPlayers() {
-      try {
-        const playersCol = collection(db, "playersform");
-        const snapshot = await getDocs(playersCol);
-        return snapshot.size;
-      } catch (error) {
-        console.error("Error counting players:", error);
-        return 0;
-      }
-    }
-
-    async function checkUserRegistration(uid) {
-      const playersCol = collection(db, "playersform");
-      const q = query(playersCol, where("uid", "==", uid));
-      const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the user is already registered
-    }
-
-    async function checkTeamNameExistence(teamName) {
-      const playersCol = collection(db, "playersform");
-      const q = query(playersCol, where("team", "==", teamName));
-      const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the team name is already taken
-    }
-
-    async function getUserInfo(uid) {
-      const userDocRef = doc(db, "users", uid);
-      const docSnap = await getDoc(userDocRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        return {
-          username: userData.username,
-          photoUrl: userData.photoUrl
-        };
-      }
-      return { username: "", photoUrl: "" };
-    }
-
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (!user) {
         window.location.href = "login.html";
-      } else {
-        currentUser = user;
-        await loadPlayerLimit();
-      }
-    });
-
-    const form = document.getElementById('registration-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      if (currentLimit === null || currentLimit <= 0) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Registration limit is 0 or not set, you cannot register at this time.',
-          confirmButtonColor: '#EF4444'
-        });
         return;
       }
 
-      const registeredCount = await countRegisteredPlayers();
+      const q = query(collection(db, "playersform"), orderBy("createdAt", "desc"));
+      onSnapshot(q, (snapshot) => {
+        playersList.innerHTML = "";
 
-      if (registeredCount >= currentLimit) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Limit Reached',
-          text: `Sorry, the maximum player registration limit (${currentLimit}) has been reached.`,
-          confirmButtonColor: '#F59E0B'
-        });
-        return;
-      }
-
-      const isAlreadyRegistered = await checkUserRegistration(currentUser.uid);
-      if (isAlreadyRegistered) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Already Registered',
-          text: 'You have already registered.',
-          confirmButtonColor: '#EF4444'
-        });
-        return;
-      }
-
-      const team = form['team'].value.trim();
-      const dlsRating = parseFloat(form['dls-rating'].value);
-      const age = Number(form['age'].value);
-      const yearsPlayed = Number(form['years-played'].value);
-
-      // Check if team name already exists
-      const isTeamNameTaken = await checkTeamNameExistence(team);
-      if (isTeamNameTaken) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Team Name Taken',
-          text: 'This team name is already registered. Please choose a different name.',
-          confirmButtonColor: '#EF4444'
-        });
-        return;
-      }
-
-      // Get user info
-      const { username, photoUrl } = await getUserInfo(currentUser.uid);
-
-      try {
-        // Run transaction to add player and decrement limit atomically
-        await runTransaction(db, async (transaction) => {
-          const limitDocRef = doc(db, "settings", "limits");
-          const limitDoc = await transaction.get(limitDocRef);
-
-          if (!limitDoc.exists()) {
-            throw "Limit document does not exist!";
-          }
-
-          const limitData = limitDoc.data();
-          const maxPlayers = limitData.maxPlayers ?? 0;
-
-          if (maxPlayers <= 0) {
-            throw "Player limit exceeded!";
-          }
-
-          // Add new player doc
-          const playersCol = collection(db, "playersform");
-          const newPlayerRef = doc(playersCol); // create new doc ref
-          transaction.set(newPlayerRef, {
-            team,
-            dlsRating,
-            age,
-            yearsPlayed,
-            uid: currentUser?.uid || null,
-            username,
-            photoUrl,
-            createdAt: new Date()
-          });
-
-          // Decrement maxPlayers by 1
-          transaction.update(limitDocRef, {
-            maxPlayers: maxPlayers - 1
-          });
-
-          // Update local currentLimit to reflect new value
-          currentLimit = maxPlayers - 1;
-          currentLimitDisplay.textContent = `Current Player Limit: ${currentLimit}`;
-        });
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Your registration has been completed!',
-          confirmButtonColor: '#F59E0B'
-        });
-        form.reset();
-      } catch (error) {
-        let msg = "";
-        if (typeof error === "string") {
-          msg = error;
-        } else if (error instanceof Error) {
-          msg = error.message;
-        } else {
-          msg = "There was an issue with registration. Please try again.";
+        if (snapshot.empty) {
+          playersList.innerHTML = `<p class="text-center text-gray-400">No players have registered yet.</p>`;
+          return;
         }
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: msg,
-          confirmButtonColor: '#EF4444'
+        let count = 1;
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const photo = data.photoUrl && data.photoUrl.trim() !== "" ? data.photoUrl : "https://via.placeholder.com/100?text=No+Image";
+
+          const card = `
+            <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg flex items-center gap-4 hover:scale-[1.02] transition-transform duration-300">
+              <div class="relative">
+                <img src="${photo}" alt="Player Photo" class="w-20 h-20 rounded-full border-2 border-yellow-400 object-cover bg-gray-700" onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=No+Image';" />
+                <span class="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-full shadow">${count}</span>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-yellow-300">${data.username || "No Username"}</h2>
+                <p class="text-gray-300">Team: <span class="text-white">${data.team || "N/A"}</span></p>
+                <p class="text-gray-300">DLS Rating: <span class="text-green-400">${data.dlsRating ?? "N/A"}</span></p>
+                <p class="text-gray-300">Age: <span class="text-white">${data.age ?? "N/A"}</span></p>
+                <p class="text-gray-300">DLS Experience: <span class="text-white">${data.yearsPlayed ?? "N/A"} years</span></p>
+              </div>
+            </div>
+          `;
+          playersList.insertAdjacentHTML("beforeend", card);
+          count++;
         });
-        console.error("Transaction error:", error);
-      }
+      });
     });
   </script>
 
