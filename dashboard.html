@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-black">
+
+  <!-- Header -->
+  <header
+    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+    <h2 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+      style="font-family: 'Audiowide', cursive;">Khelo Games</h2>
+
+    <div style="height: 29px;"
+      class="flex items-center gap-1 bg-gray-900 text-black px-1 py-1 rounded-full shadow-lg border border-gray-700 ml-8">
+      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
+      </div>
+      <p id="mainBalance" class="text-sm font-bold text-yellow-300">100</p>
+      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
+      </button>
+    </div>
+    <i id="sidebar-toggle" class="fa-solid fa-bars text-2xl"></i>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="sidebar fixed top-0 left-0 w-52 h-full bg-black text-white transform transition-transform ease-in-out -translate-x-full md:translate-x-0 overflow-auto border-r border-solid border-gray-600 z-40">
+    <div class="logo mb-5 border-b border-solid border-gray-600 p-2.5">
+      <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+        style="font-family: 'Audiowide', cursive;">Khelo Games</h2>
+    </div>
+    <ul class="p-4 pt-0">
+      <li><a href="dashboard.html"
+          class="flex items-center text-white bg-gray-800 p-2 rounded-sm mb-5"><i
+            class="fa-solid fa-desktop mr-3"></i>Dashboard</a></li>
+      <li><a href="profile.html" class="flex items-center text-white hover:bg-gray-800 p-2 rounded-sm mb-5"><i
+            class="fa-regular fa-square-check mr-3"></i>Account Status</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="py-20 ml-0 md:ml-60 px-4 space-y-4">
+
+    <!-- Friendly Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">DLS Friendly Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('dlsbanner.webp');">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="DLS Banner"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">Friendly Matches</p>
+          <p class="text-xs text-white">10 Matches Found</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- League Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">DLS League Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('dlsleague.jpeg');">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="League Icon"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">League Matches</p>
+          <p class="text-xs text-white">48 Matches Found</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">Others Game Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('betbannet.jpeg');">
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="Game Icon"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">Game Matches</p>
+          <p class="text-xs text-white">5 Matches Found</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telegram & Messenger Section -->
+    <div>
+      <div class="flex items-center space-x-1 mt-8 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">Social Channels</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="flex gap-2">
+        <!-- Telegram Box -->
+        <a href="#" target="_blank"
+          class="flex-1 relative h-28 bg-cover bg-center border border-gray-700 rounded-lg flex flex-col items-center justify-center shadow-md overflow-hidden group"
+          style="background-image: url('telegram-bg.jpg');">
+          <div
+            class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg transition-opacity duration-300 group-hover:bg-opacity-40"></div>
+          <i
+            class="fa-brands fa-telegram text-4xl text-blue-400 z-10 mb-2 transition-transform duration-300 group-hover:scale-110"></i>
+          <p
+            class="text-yellow-300 font-semibold text-base z-10 text-center leading-tight select-none pointer-events-none">
+            Join Telegram</p>
+          <p class="text-xs text-white z-10 text-center select-none pointer-events-none">Get latest updates & support</p>
+        </a>
+
+        <!-- Messenger Box -->
+        <a href="#" target="_blank"
+          class="flex-1 relative h-28 bg-cover bg-center border border-gray-700 rounded-lg flex flex-col items-center justify-center shadow-md overflow-hidden group"
+          style="background-image: url('messenger-bg.jpg');">
+          <div
+            class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg transition-opacity duration-300 group-hover:bg-opacity-40"></div>
+          <i
+            class="fa-brands fa-facebook-messenger text-4xl text-blue-500 z-10 mb-2 transition-transform duration-300 group-hover:scale-110"></i>
+          <p
+            class="text-yellow-300 font-semibold text-base z-10 text-center leading-tight select-none pointer-events-none">
+            Join Messenger</p>
+          <p class="text-xs text-white z-10 text-center select-none pointer-events-none">Chat with our support team</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav
+    class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 z-10 sm:flex sm:justify-between sm:h-14 sm:px-2 z-50">
+    <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Home
+    </a>
+    <a href="result.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Result
+    </a>
+    <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      League
+    </a>
+    <a href="match-history.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-clock-rotate-left text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      History
+    </a>
+    <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
+        <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
+      </div>
+      Profile
+    </a>
+  </nav>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let userBalance = 0;
+
+    function formatBalance(amount) {
+      return (+amount.toFixed(2)).toString();
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+      currentUser = user;
+
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          userBalance = data.balance || 0;
+          document.getElementById("mainBalance").innerText = formatBalance(userBalance);
+        }
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+      }
+    });
+
+    const sidebar = document.getElementById("sidebar");
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+
+    sidebarToggle.addEventListener("click", function () {
+      sidebar.classList.toggle("-translate-x-full");
+      sidebarToggle.classList.toggle("fa-bars");
+      sidebarToggle.classList.toggle("fa-xmark");
+    });
+  </script>
+
+</body>
+
+  </html>
