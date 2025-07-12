@@ -15,13 +15,18 @@
 <body class="bg-black">
 
   <!-- Header -->
-  <header
-    class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
-    <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
-      style="font-family: 'Audiowide', cursive;">Khelo Dls</h2>
+<header
+  class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+  
+  <!-- Logo -->
+  <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+    style="font-family: 'Audiowide', cursive;">Khelo Dls</h2>
 
+  <!-- Right Section -->
+  <div class="flex items-center gap-2">
+    <!-- Balance Section -->
     <div style="height: 30px;"
-      class="ml-10 flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-700">
+      class="balance-section flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-700">
       <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
         <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
       </div>
@@ -30,8 +35,12 @@
         <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
       </button>
     </div>
-    <i id="sidebar-toggle" class="fa-solid fa-bars text-2xl"></i>
-  </header>
+
+    <!-- Sidebar Toggle Icon -->
+    <i id="sidebar-toggle" class="fa-solid fa-bars text-2xl cursor-pointer"></i>
+  </div>
+</header>
+
 
   <!-- Sidebar -->
   <aside id="sidebar"
