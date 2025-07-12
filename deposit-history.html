@@ -17,19 +17,21 @@
 </head>
 <body class="bg-black min-h-screen font-sans text-white">
 
-  <!-- Header -->
-  <header class="bg-black w-full max-w-md shadow-md py-2 px-3 mb-2 mx-auto border-b border-gray-600 flex items-center justify-between">
+  <!-- Header Section -->
+  <header class="bg-gradient-to-r from-black via-gray-900 to-black w-full max-w-md shadow-md py-2 px-3 mb-3 mx-auto border-b border-gray-700 flex items-center justify-between header-glow rounded-b-xl">
     <div class="flex items-center gap-2">
-      <div class="bg-yellow-600 bg-opacity-50 border border-yellow-500 text-yellow-300 w-9 h-9 flex items-center justify-center font-bold rounded-full" style="font-family: 'Audiowide', cursive;">
-        GJ
-      </div>
-      <h2 class="text-xl font-bold text-center bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Good Job</h2>
+      <div class="bg-yellow-600 bg-opacity-50 border border-yellow-500 text-yellow-300 w-8 h-8 flex items-center justify-center font-bold rounded-full shadow" style="font-family: 'Audiowide', cursive;">KD</div>
+      <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Khelo Dls</h2>
     </div>
-    <div class="flex items-center gap-6 text-2xl text-gray-100">
-      <i class="fa-solid fa-headset font-bold text-1xl"></i>
-      <div id="ProfileBtn" class="bg-gray-900 w-5 h-8 hover:border-purple-500 flex items-center justify-center rounded-sm border border-gray-700" onclick="toggleProfile()">
-        <i class="fa-solid fa-ellipsis-vertical"></i>
+    <div style="height: 30px;"
+      class="flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-600 ml-8">
+      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
       </div>
+      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0</p>
+      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
+      </button>
     </div>
   </header>
 
@@ -43,42 +45,45 @@
     </section>
   </main>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 z-10">
-  <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-    <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-      <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
-    </div>
-    Home
-  </a>
+  <!-- Bottom Nav -->
+  <nav
+    class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-40">
+    <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-house text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Home
+    </a>
+    <a href="match.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Matches
+    </a>
+    <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      League
+    </a>
+    <a href="rank.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+         Ranking
+      </a>
 
-  <a href="result.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-    <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-      <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
-    </div>
-    Result
-  </a>
-
-  <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-    <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-      <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
-    </div>
-    League
-  </a>
-
-  <a href="match-history.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-    <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
-      <i class="fa-solid fa-clock-rotate-left text-lg text-gray-300 hover:text-yellow-400"></i>
-    </div>
-    History
-  </a>
-
-  <a href="profile.html"class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-    <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
-      <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
-    </div> 
-    Profile
-  </a>
+    <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
+        <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
+      </div>
+      Profile
+    </a>
   </nav>
 
   <script type="module">
