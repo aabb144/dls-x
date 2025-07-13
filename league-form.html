@@ -278,7 +278,19 @@
         // Set 'joined' field to true after successful registration
         const playersCol = collection(db, "playersform");
         const playerDocRef = doc(playersCol, currentUser.uid);
-        await updateDoc(playerDocRef, { joined: true });
+        const playerDocSnap = await getDoc(playerDocRef);
+
+        if (playerDocSnap.exists()) {
+          await updateDoc(playerDocRef, { joined: true });
+        } else {
+          console.error("No document to update. Player document not found.");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Player document not found. Please try again.',
+            confirmButtonColor: '#EF4444'
+          });
+        }
 
         Swal.fire({
           icon: 'success',
