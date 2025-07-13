@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-black">
+
+  <!-- Header -->
+<header
+  class="bg-gradient-to-r from-black via-gray-900 to-black text-white py-2 px-3 flex items-center justify-between border-b border-solid border-gray-700 rounded-b-xl z-50 fixed top-0 left-0 right-0">
+  
+  <!-- Logo -->
+  <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+    style="font-family: 'Audiowide', cursive;">Khelo Dls</h2>
+
+  <!-- Right Section -->
+  <div class="flex items-center gap-3">
+    <!-- Balance Section -->
+    <div style="height: 30px;"
+      class="balance-section flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-700">
+      <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+        <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
+      </div>
+      <p id="mainBalance" class="text-sm font-bold text-yellow-300">0</p>
+      <button class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center shadow-md">
+        <i class="fa-solid fa-plus text-gray-100 text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Sidebar Toggle Icon -->
+    <i id="sidebar-toggle" class="fa-solid fa-bars text-2xl cursor-pointer"></i>
+  </div>
+</header>
+
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+    class="sidebar fixed top-0 left-0 w-52 h-full bg-black text-white transform transition-transform ease-in-out -translate-x-full md:translate-x-0 overflow-auto border-r border-solid border-gray-600 z-40">
+    <div class="logo mb-5 border-b border-solid border-gray-600 p-2.5">
+      <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent"
+        style="font-family: 'Audiowide', cursive;">Khelo Games</h2>
+    </div>
+    <ul class="p-4 pt-0 space-y-2">
+      <li><a href="dashboard.html"
+          class="flex items-center text-white bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-desktop mr-3"></i>Dashboard</a>
+      </li>
+      <li><a href="profile.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-regular fa-circle-user mr-3"></i>My Profile</a>
+      </li>
+      <li><a href="league-form.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-regular fa-registered mr-3"></i>League Form</a>
+      </li>
+      <li><a href="player-card.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-regular fa-address-card mr-3"></i>Players Card</a>
+      </li>
+      <li><a href="league.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-trophy mr-3"></i>DLS League</a>
+      </li>
+      <li><a href="#" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-gamepad mr-3"></i>Others Games</a>
+      </li>
+      <li><a href="#" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-ranking-star mr-3"></i>Ranking</a>
+      </li>
+      <li><a href="deposit.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-wallet mr-3"></i>Deposit</a>
+      </li>
+      <li><a href="deposit-history.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-clock-rotate-left mr-3"></i>Deposit History</a>
+      </li>
+      <li><a href="withdraw.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-window-maximize mr-3"></i>Withdrawal</a>
+      </li>
+      <li><a href="withdraw-history.html" class="flex items-center text-white hover:bg-gray-800 p-1.5 rounded-sm"><i
+            class="fa-solid fa-clock-rotate-left mr-3"></i>Withdraw History</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="py-20 ml-0 md:ml-60 px-4 space-y-4">
+
+    <!-- Friendly Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">DLS Friendly Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <a href="match.html">
+      <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('dlsbanner.webp');">
+        <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-xs z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="DLS Banner"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">Friendly Matches</p>
+          <p class="text-xs text-white">10 Matches Found</p>
+        </div>
+      </div>
+      </a>
+    </div>
+
+    <!-- League Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">DLS League Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <a href="league.html"> 
+        <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('dlsleague.jpeg');">
+        <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-xs z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="League Icon"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">League Matches</p>
+          <p class="text-xs text-white">48 Matches Found</p>
+        </div>
+       </div>
+      </a>
+    </div>
+
+    <!-- Game Matches -->
+    <div>
+      <div class="flex items-center space-x-2 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">Others Game Matches</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="relative w-full h-24 bg-cover bg-center border border-gray-700 rounded-lg flex items-center shadow-md px-3 space-x-2 overflow-hidden"
+        style="background-image: url('betbannet.jpeg');">
+        <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-xs z-0 rounded-lg"></div>
+        <img src="dlsbanner.webp" alt="Game Icon"
+          class="w-12 h-12 rounded-full object-cover border border-white z-10" />
+        <div class="flex flex-col justify-center z-10">
+          <p class="text-yellow-300 font-semibold text-sm sm:text-base">Game Matches</p>
+          <p class="text-xs text-white">5 Matches Found</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telegram & Messenger Section -->
+    <div>
+      <div class="flex items-center space-x-1 mt-8 mb-2">
+        <div class="flex-grow h-px bg-gray-500"></div>
+        <p class="text-gray-200 font-semibold text-sm uppercase whitespace-nowrap">Social Channels</p>
+        <div class="flex-grow h-px bg-gray-500"></div>
+      </div>
+
+      <div class="flex gap-2">
+        <!-- Telegram Box -->
+        <a href="#" target="_blank"
+          class="flex-1 relative h-28 bg-cover bg-center border border-gray-700 rounded-lg flex flex-col items-center justify-center shadow-md overflow-hidden group"
+          style="background-image: url('telegram-bg.jpg');">
+          <div
+            class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg transition-opacity duration-300 group-hover:bg-opacity-40"></div>
+          <i
+            class="fa-brands fa-telegram text-4xl text-blue-400 z-10 mb-2 transition-transform duration-300 group-hover:scale-110"></i>
+          <p
+            class="text-yellow-300 font-semibold text-base z-10 text-center leading-tight select-none pointer-events-none">
+            Join Telegram</p>
+          <p class="text-xs text-white z-10 text-center select-none pointer-events-none">Get latest updates & support</p>
+        </a>
+
+        <!-- Messenger Box -->
+        <a href="https://m.me/j/AbYn9awI4qHvdDvW/" target="_blank"
+          class="flex-1 relative h-28 bg-cover bg-center border border-gray-700 rounded-lg flex flex-col items-center justify-center shadow-md overflow-hidden group"
+          style="background-image: url('messenger-bg.jpg');">
+          <div
+            class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-xl z-0 rounded-lg transition-opacity duration-300 group-hover:bg-opacity-40"></div>
+          <i
+            class="fa-brands fa-facebook-messenger text-4xl text-blue-500 z-10 mb-2 transition-transform duration-300 group-hover:scale-110"></i>
+          <p
+            class="text-yellow-300 font-semibold text-base z-10 text-center leading-tight select-none pointer-events-none">
+            Join Messenger</p>
+          <p class="text-xs text-white z-10 text-center select-none pointer-events-none">Chat with our support team</p>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav
+    class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-50">
+    <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-house text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Home
+    </a>
+    <a href="match.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      Matches
+    </a>
+    <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+      League
+    </a>
+    <a href="rank.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+        <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
+      </div>
+         Ranking
+      </a>
+
+    <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
+      <div
+        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
+        <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
+      </div>
+      Profile
+    </a>
+  </nav>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+      authDomain: "dls12364.firebaseapp.com",
+      projectId: "dls12364",
+      storageBucket: "dls12364.firebasestorage.app",
+      messagingSenderId: "431397971734",
+      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+      measurementId: "G-B75EB4GGRV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let teamPhotos = {};
+    let fixersDocs = {};
+
+    async function loadTeamPhotos() {
+      const snap = await getDocs(collection(db, "playersform"));
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.team && data.photoUrl) {
+          teamPhotos[data.team.trim().toLowerCase()] = data.photoUrl;
+        }
+      });
+    }
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split("T")[0];
+    }
+
+    function formatDateAndTime(dateStr) {
+      const date = new Date(dateStr);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'long' });
+      const year = date.getFullYear();
+      const hours = date.getHours();
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${day}-${month}-${year} Time: ${hours}:${minutes} Hours`;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await loadTeamPhotos();
+        loadFixers(user);
+      }
+    });
+
+    function loadFixers(user) {
+      const fixersRef = collection(db, "fixers");
+      onSnapshot(query(fixersRef), (snapshot) => {
+        const fixersContainer = document.getElementById("fixers-list");
+
+        if (snapshot.empty) {
+          fixersContainer.innerHTML = `<p class="text-center text-gray-400">No fixers available.</p>`;
+          return;
+        }
+
+        const fixers = [];
+        fixersDocs = {};
+
+        snapshot.forEach(docSnap => {
+          fixers.push(docSnap.data());
+          const d = docSnap.data();
+          const key = `${d.team1}__${d.team2}__${d.date}`;
+          fixersDocs[key] = docSnap.ref;
+        });
+
+        const fixersByDate = {};
+        fixers.forEach(fix => {
+          const key = fix.date;
+          if (!fixersByDate[key]) fixersByDate[key] = [];
+          fixersByDate[key].push(fix);
+        });
+
+        const sortedDates = Object.keys(fixersByDate).sort();
+        const baseDate = sortedDates[0];
+        let html = "";
+
+        sortedDates.forEach((date, groupIndex) => {
+          const groupName = String.fromCharCode(65 + groupIndex);
+          html += `<div class="bg-yellow-400 rounded-lg bg-opacity-40 py-1 px-3 text-center text-lg font-semibold uppercase text-yellow-300 mb-2">Group ${groupName}</div>`;
+
+          const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
+
+          matches.forEach((match, idx) => {
+            const matchDateAndTime = formatDateAndTime(addDays(baseDate, idx));  // Updated date & time format
+            const team1Img = teamPhotos[match.team1.trim().toLowerCase()] || "";
+            const team2Img = teamPhotos[match.team2.trim().toLowerCase()] || "";
+
+            const key = `${match.team1}__${match.team2}__${match.date}`;
+            const t1GoalVal = (match.team1Goal ?? "").toString();
+            const t2GoalVal = (match.team2Goal ?? "").toString();
+
+            html += `
+              <div class="border border-gray-700 rounded-lg p-3 text-sm bg-gray-900 shadow space-y-2">
+                <div class="flex items-center justify-between space-x-3">
+                  <p class="text-sm text-gray-300 font-semibold uppercase">Khelo DLS Tournament 2025</p>
+                  <p data-key="${key}" class="open-goal-modal-btn bg-yellow-500 bg-opacity-30 py-0.5 px-2 rounded-lg flex items-center justify-center border border-yellow-300">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm text-yellow-300 animate-pulse"></i>
+                  </p>
+                </div>
+                <div class="grid grid-cols-2 justify-between text-sm text-gray-300 pt-2 uppercase">
+                  <div class="flex justify-center gap-3 items-center text-xs">
+                    <p>Date:</p><span class="text-yellow-300 font-medium">${matchDateAndTime.split('Time:')[0]}</span>
+                  </div>
+                  <div class="flex justify-center gap-3 items-center text-xs">
+                    <p>Time:</p><span class="text-yellow-300 font-medium">${matchDateAndTime.split('Time:')[1]}</span>
+                  </div>
+                </div>
+                <div class="flex justify-center items-center gap-3 font-semibold text-white">
+                  <div class="flex flex-col items-center gap-1 flex-1 justify-end">
+                    ${team1Img ? `<img src="${team1Img}" class="w-10 h-10 rounded-full" alt="${match.team1}" />` : ""}
+                    <span>${match.team1}</span>
+                  </div>
+                  <div class="text-yellow-400 font-bold text-2xl select-none">VS</div>
+                  <div class="flex flex-col items-center gap-1 flex-1 justify-start">
+                    ${team2Img ? `<img src="${team2Img}" class="w-10 h-10 rounded-full" alt="${match.team2}" />` : ""}
+                    <span>${match.team2}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        });
+
+        fixersContainer.innerHTML = html;
+
+        document.querySelectorAll(".open-goal-modal-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const key = e.currentTarget.getAttribute("data-key");
+            const match = fixers.find(f => `${f.team1}__${f.team2}__${f.date}` === key);
+
+            const userTeam = user.displayName.toLowerCase();
+            const team1 = match.team1.toLowerCase();
+            const team2 = match.team2.toLowerCase();
+
+            if (userTeam !== team1 && userTeam !== team2) {
+              Swal.fire({ icon: "warning", title: "You are not part of this match!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+              return;
+            }
+
+            const goal1Val = (match.team1Goal ?? "").toString();
+            const goal2Val = (match.team2Goal ?? "").toString();
+
+            document.getElementById("goal-modal-content").innerHTML = `
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-8 px-2">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="text-sm font-semibold">${match.team1}</span>
+                    <input type="number" value="${goal1Val}" id="goal1-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
+                  </div>
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="text-sm font-semibold">${match.team2}</span>
+                    <input type="number" value="${goal2Val}" id="goal2-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
+                  </div>
+                </div>
+              </div>
+            `;
+
+            document.getElementById("goal-modal").classList.remove("hidden");
+
+            document.getElementById("close-modal").addEventListener("click", () => {
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
+
+            document.getElementById("save-goals").addEventListener("click", async () => {
+              let goal1 = document.getElementById(`goal1-modal-${key}`).value;
+              let goal2 = document.getElementById(`goal2-modal-${key}`).value;
+
+              goal1 = goal1 === "" ? null : Number(goal1);
+              goal2 = goal2 === "" ? null : Number(goal2);
+
+              if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
+                Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              const docRef = fixersDocs[key];
+              if (!docRef) {
+                Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              await updateDoc(docRef, {
+                team1Goal: goal1,
+                team2Goal: goal2,
+              });
+
+              Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
+          });
+        });
+      });
+    }
+</script>
+
+</body>
+</html>
