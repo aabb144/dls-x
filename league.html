@@ -95,7 +95,7 @@
       Profile
     </a>
   </nav>
-       <script type="module">
+     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -260,6 +260,12 @@
             const userTeam = userTeams[user.uid]; // Get the user's team from playersform collection
             if (userTeam !== match.team1.trim().toLowerCase() && userTeam !== match.team2.trim().toLowerCase()) {
               Swal.fire({ icon: "warning", title: "You are not part of this match!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+              return;
+            }
+
+            // Check if one of the teams has already submitted a goal
+            if ((match.team1Goal !== null || match.team2Goal !== null)) {
+              Swal.fire({ icon: "warning", title: "Already Matches Updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
               return;
             }
 
