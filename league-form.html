@@ -18,8 +18,7 @@
       <div class="bg-yellow-600 bg-opacity-50 border border-yellow-500 text-yellow-300 w-8 h-8 flex items-center justify-center font-bold rounded-full shadow" style="font-family: 'Audiowide', cursive;">KD</div>
       <h2 class="text-xl font-bold bg-gradient-to-r from-yellow-400 via-green-300 to-yellow-400 bg-clip-text text-transparent" style="font-family: 'Audiowide', cursive;">Khelo Dls</h2>
     </div>
-    <div style="height: 30px;"
-      class="flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-600 ml-8">
+    <div style="height: 30px;" class="flex items-center gap-1 bg-black px-1 py-1 rounded-full shadow-lg border border-gray-600 ml-8">
       <div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
         <i class="fa-solid fa-bangladeshi-taka-sign text-white text-sm"></i>
       </div>
@@ -53,40 +52,34 @@
   </main>
 
   <!-- Bottom Nav -->
-  <nav
-    class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-40">
+  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-40">
     <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-house text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       Home
     </a>
     <a href="match.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       Matches
     </a>
     <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       League
     </a>
     <a href="rank.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
-         Ranking
-      </a>
+      Ranking
+    </a>
 
     <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
         <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
       </div>
       Profile
@@ -96,7 +89,7 @@
   <!-- Firebase Scripts -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -268,7 +261,8 @@
             uid: currentUser?.uid || null,
             username,
             photoUrl,
-            createdAt: new Date()
+            createdAt: new Date(),
+            joined: false  // Default value for 'joined'
           });
 
           // Decrement maxPlayers by 1
@@ -280,6 +274,11 @@
           currentLimit = maxPlayers - 1;
           currentLimitDisplay.textContent = `Current Player Limit: ${currentLimit}`;
         });
+
+        // Set 'joined' field to true after successful registration
+        const playersCol = collection(db, "playersform");
+        const playerDocRef = doc(playersCol, currentUser.uid);
+        await updateDoc(playerDocRef, { joined: true });
 
         Swal.fire({
           icon: 'success',
