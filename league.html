@@ -95,7 +95,7 @@
       Profile
     </a>
   </nav>
-    <script type="module">
+     <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -224,7 +224,7 @@
                   <i class="fa-solid fa-cloud-arrow-up text-sm text-yellow-300 animate-pulse"></i>
                 </p>
               </div>
-              <div class="grid grid-cols-2 justify-between text-sm text-gray-300 pt-2 uppercase">
+              <div class="grid grid-cols-2 justify-between  text-sm text-gray-300 pt-2 uppercase">
                 <div class="flex justify-center gap-3 items-center text-xs">
                   <p>Date:</p><span class="text-yellow-300 font-medium">${matchDateAndTime.split('Time:')[0]}</span>
                 </div>
@@ -256,15 +256,6 @@
         btn.addEventListener("click", (e) => {
           const key = e.currentTarget.getAttribute("data-key");
           const match = fixers.find(f => `${f.team1}__${f.team2}__${f.date}` === key);
-
-          // Get current user
-          const user = auth.currentUser;
-
-          // Check if user is part of the match
-          if (match.team1 !== user.displayName && match.team2 !== user.displayName) {
-            Swal.fire({ icon: "error", title: "You are not allowed to submit goals for this match!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-            return;
-          }
 
           const goal1Val = (match.team1Goal ?? "").toString();
           const goal2Val = (match.team2Goal ?? "").toString();
@@ -302,6 +293,15 @@
               return;
             }
 
+            // Check if the current user belongs to the teams in this match
+            const userTeam = user.displayName?.toLowerCase() || ""; // Assuming the user's team name is saved in the `displayName`
+            const isUserAllowed = [match.team1.toLowerCase(), match.team2.toLowerCase()].includes(userTeam);
+
+            if (!isUserAllowed) {
+              Swal.fire({ icon: "warning", title: "You are not allowed to submit goals for this match.", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+              return;
+            }
+
             const docRef = fixersDocs[key];
             if (!docRef) {
               Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
@@ -322,7 +322,6 @@
     }
   });
 </script>
-
 
 </body>
 </html>
