@@ -166,87 +166,84 @@
   </nav>
 
   <!-- Firebase Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-      authDomain: "dls12364.firebaseapp.com",
-      projectId: "dls12364",
-      storageBucket: "dls12364.firebasestorage.app",
-      messagingSenderId: "431397971734",
-      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-      measurementId: "G-B75EB4GGRV"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+    authDomain: "dls12364.firebaseapp.com",
+    projectId: "dls12364",
+    storageBucket: "dls12364.firebasestorage.app",
+    messagingSenderId: "431397971734",
+    appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+    measurementId: "G-B75EB4GGRV"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    function hideLoader() {
-      const loader = document.getElementById('loadingOverlay');
-      if (loader) loader.style.display = 'none';
-    }
+  function hideLoader() {
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) loader.style.display = 'none';
+  }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) return window.location.href = "login.html";
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return window.location.href = "login.html";
 
-      document.getElementById("email").textContent = user.email || "No Email";
-      const referralLink = `${window.location.origin}/signup.html?ref=${user.uid}`;
-      document.getElementById("referLink").value = referralLink;
+    document.getElementById("email").textContent = user.email || "No Email";
+    const referralLink = `${window.location.origin}/signup.html?ref=${user.uid}`;
+    document.getElementById("referLink").value = referralLink;
 
-      const userDocRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
+    // Real-time listener for user data
+    const userDocRef = doc(db, "users", user.uid);
+    onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
         document.getElementById("username").textContent = userData.username || "No Name";
         document.getElementById("mainBalance").textContent = userData.balance ?? 0;
 
-        // Set the profile image from the user's database
-        const profileImage = userData.photoUrl || ''; // Assuming the field is photoUrl
-        if (profileImage) {
-          document.getElementById("profileImage").src = profileImage;
-        } else {
-          document.getElementById("profileImage").src = 'default-avatar.png'; // Fallback image
-        }
+        const profileImage = userData.photoUrl || '';
+        document.getElementById("profileImage").src = profileImage || 'default-avatar.png';
 
-        // Display the verification status
         const verificationStatus = userData.verified === "verified" ? "Verified" : "Not Verified";
         document.getElementById("verificationStatus").textContent = verificationStatus;
       }
-
-      // Calculate total referrals
-      const q = query(collection(db, "users"), where("referredBy", "==", user.uid));
-      const querySnapshot = await getDocs(q);
-      document.getElementById("totalRefers").textContent = querySnapshot.size;
-
-      hideLoader();
     });
 
-    window.logout = async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
+    // Real-time listener for referral count
+    const referralQuery = query(collection(db, "users"), where("referredBy", "==", user.uid));
+    onSnapshot(referralQuery, (querySnapshot) => {
+      document.getElementById("totalRefers").textContent = querySnapshot.size;
+    });
 
-    window.copyReferLink = () => {
-      const input = document.getElementById("referLink");
-      navigator.clipboard.writeText(input.value).then(() => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Referral link copied!',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          background: '#1a202c',
-          color: '#fff'
-        });
+    hideLoader();
+  });
+
+  window.logout = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
+
+  window.copyReferLink = () => {
+    const input = document.getElementById("referLink");
+    navigator.clipboard.writeText(input.value).then(() => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Referral link copied!',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#1a202c',
+        color: '#fff'
       });
-    };
-  </script>
+    });
+  };
+</script>
+
 </body>
 </html>
