@@ -95,7 +95,7 @@
       Profile
     </a>
   </nav>
-    <script type="module">
+     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -116,6 +116,7 @@
 
     let teamPhotos = {};
     let fixersDocs = {};
+    let currentUser = null;
 
     async function loadTeamPhotos() {
       const snap = await getDocs(collection(db, "playersform"));
@@ -157,6 +158,7 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        currentUser = user;
         await loadTeamPhotos();
         loadFixers();
 
@@ -257,69 +259,71 @@
             const key = e.currentTarget.getAttribute("data-key");
             const match = fixers.find(f => `${f.team1}__${f.team2}__${f.date}` === key);
 
-            const currentUser = auth.currentUser;
-            if (currentUser && (currentUser.displayName.toLowerCase() === match.team1.toLowerCase() || currentUser.displayName.toLowerCase() === match.team2.toLowerCase())) {
-              const goal1Val = (match.team1Goal ?? "").toString();
-              const goal2Val = (match.team2Goal ?? "").toString();
+            if (currentUser) {
+              if (currentUser.displayName !== match.team1 && currentUser.displayName !== match.team2) {
+                Swal.fire({
+                  icon: "warning",
+                  title: "You are not allowed to edit this match's score!",
+                  timer: 2000,
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false
+                });
+                return;
+              }
+            }
 
-              document.getElementById("goal-modal-content").innerHTML = `
-                <div class="flex flex-col gap-4">
-                <div class="flex items-center justify-between gap-8 px-2">
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="text-sm font-semibold">${match.team1}</span>
-                    <input type="number" value="${goal1Val}" id="goal1-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
-                  </div>
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="text-sm font-semibold">${match.team2}</span>
-                    <input type="number" value="${goal2Val}" id="goal2-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
-                  </div>
+            const goal1Val = (match.team1Goal ?? "").toString();
+            const goal2Val = (match.team2Goal ?? "").toString();
+
+            document.getElementById("goal-modal-content").innerHTML = `
+              <div class="flex flex-col gap-4">
+              <div class="flex items-center justify-between gap-8 px-2">
+                <div class="flex flex-col items-center gap-2">
+                  <span class="text-sm font-semibold">${match.team1}</span>
+                  <input type="number" value="${goal1Val}" id="goal1-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                  <span class="text-sm font-semibold">${match.team2}</span>
+                  <input type="number" value="${goal2Val}" id="goal2-modal-${key}" placeholder="Enter goal" class="border border-gray-600 rounded-sm outline-none text-white bg-black text-sm px-2 py-1 text-center w-28" />
                 </div>
               </div>
-              `;
+            </div>
+            `;
 
-              document.getElementById("goal-modal").classList.remove("hidden");
+            document.getElementById("goal-modal").classList.remove("hidden");
 
-              document.getElementById("close-modal").addEventListener("click", () => {
-                document.getElementById("goal-modal").classList.add("hidden");
+            document.getElementById("close-modal").addEventListener("click", () => {
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
+
+            document.getElementById("save-goals").addEventListener("click", async () => {
+              let goal1 = document.getElementById(`goal1-modal-${key}`).value;
+              let goal2 = document.getElementById(`goal2-modal-${key}`).value;
+
+              goal1 = goal1 === "" ? null : Number(goal1);
+              goal2 = goal2 === "" ? null : Number(goal2);
+
+              if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
+                Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              const docRef = fixersDocs[key];
+              if (!docRef) {
+                Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
+              await updateDoc(docRef, {
+                team1Goal: goal1,
+                team2Goal: goal2,
               });
 
-              document.getElementById("save-goals").addEventListener("click", async () => {
-                let goal1 = document.getElementById(`goal1-modal-${key}`).value;
-                let goal2 = document.getElementById(`goal2-modal-${key}`).value;
+              Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
 
-                goal1 = goal1 === "" ? null : Number(goal1);
-                goal2 = goal2 === "" ? null : Number(goal2);
-
-                if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
-                  Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-                  return;
-                }
-
-                const docRef = fixersDocs[key];
-                if (!docRef) {
-                  Swal.fire({ icon: "error", title: "Document not found!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-                  return;
-                }
-
-                await updateDoc(docRef, {
-                  team1Goal: goal1,
-                  team2Goal: goal2,
-                });
-
-                Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
-
-                document.getElementById("goal-modal").classList.add("hidden");
-              });
-            } else {
-              Swal.fire({
-                icon: "warning",
-                title: "You can only update goals for your own team.",
-                timer: 2000,
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false
-              });
-            }
+              document.getElementById("goal-modal").classList.add("hidden");
+            });
           });
         });
       });
