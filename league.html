@@ -137,12 +137,22 @@
 
     function formatDateAndTime(dateStr) {
       const date = new Date(dateStr);
+      const now = new Date();
+      const diffTime = date - now;
       const day = date.getDate();
       const month = date.toLocaleString('default', { month: 'long' });
       const year = date.getFullYear();
       const hours = date.getHours();
       const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${day}-${month}-${year} Time: ${hours}:${minutes} Hours`;
+      
+      let timeText = `${day}-${month}-${year} Time: ${hours}:${minutes} Hours`;
+
+      // Check if the match is within 24 hours
+      if (diffTime <= 24 * 60 * 60 * 1000 && diffTime >= 0) {
+        timeText += " (24 hours)";
+      }
+
+      return timeText;
     }
 
      function formatBalance(amount) {
@@ -325,6 +335,7 @@
       });
     }
 </script>
+
 
 </body>
 </html>
