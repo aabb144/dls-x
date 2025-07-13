@@ -237,57 +237,63 @@
   </nav>
 
   <!-- Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
-      authDomain: "dls12364.firebaseapp.com",
-      projectId: "dls12364",
-      storageBucket: "dls12364.firebasestorage.app",
-      messagingSenderId: "431397971734",
-      appId: "1:431397971734:web:0cb1a8b53ee09157425237",
-      measurementId: "G-B75EB4GGRV",
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBscFHFPGGsWYNe91JO5meCzueVcDg4gFw",
+    authDomain: "dls12364.firebaseapp.com",
+    projectId: "dls12364",
+    storageBucket: "dls12364.firebasestorage.app",
+    messagingSenderId: "431397971734",
+    appId: "1:431397971734:web:0cb1a8b53ee09157425237",
+    measurementId: "G-B75EB4GGRV",
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    let currentUser = null;
-    let userBalance = 0;
+  let currentUser = null;
+  let userBalance = 0;
 
-    function formatBalance(amount) {
-      return (+amount.toFixed(2)).toString();
-    }
+  function formatBalance(amount) {
+    return (+amount.toFixed(2)).toString();
+  }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) return window.location.href = "login.html";
-      currentUser = user;
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return window.location.href = "login.html";
+    currentUser = user;
 
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
+    try {
+      const userRef = doc(db, "users", user.uid);
+
+      // Real-time listener for balance
+      onSnapshot(userRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
           userBalance = data.balance || 0;
           document.getElementById("mainBalance").innerText = formatBalance(userBalance);
         }
-      } catch (error) {
-        console.error("Error fetching user data: ", error);
-      }
-    });
+      });
 
-    const sidebar = document.getElementById("sidebar");
-    const sidebarToggle = document.getElementById("sidebar-toggle");
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  });
 
-    sidebarToggle.addEventListener("click", function () {
-      sidebar.classList.toggle("-translate-x-full");
-      sidebarToggle.classList.toggle("fa-bars");
-      sidebarToggle.classList.toggle("fa-xmark");
-    });
-  </script>
+  const sidebar = document.getElementById("sidebar");
+  const sidebarToggle = document.getElementById("sidebar-toggle");
+
+  sidebarToggle.addEventListener("click", function () {
+    sidebar.classList.toggle("-translate-x-full");
+    sidebarToggle.classList.toggle("fa-bars");
+    sidebarToggle.classList.toggle("fa-xmark");
+  });
+</script>
+
 
 </body>
 
