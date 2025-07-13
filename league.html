@@ -145,6 +145,25 @@
       return `${day}-${month}-${year} Time: ${hours}:${minutes} Hours`;
     }
 
+     function formatBalance(amount) {
+      return (+amount.toFixed(2)).toString();
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await loadTeamPhotos();
+        loadFixers();
+
+        const userRef = doc(db, "users", user.uid);
+        onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const userBalance = docSnap.data().balance || 0;
+            document.getElementById("mainBalance").textContent = formatBalance(userBalance);
+          }
+        });
+      }
+    });
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         await loadTeamPhotos();  // Load user team information and photos
