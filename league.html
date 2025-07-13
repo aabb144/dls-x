@@ -95,7 +95,7 @@
       Profile
     </a>
   </nav>
-     <script type="module">
+       <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -116,6 +116,7 @@
 
     let teamPhotos = {};
     let fixersDocs = {};
+    let userTeams = {}; // To store user team information (UID -> team name)
 
     async function loadTeamPhotos() {
       const snap = await getDocs(collection(db, "playersform"));
@@ -123,6 +124,7 @@
         const data = doc.data();
         if (data.team && data.photoUrl) {
           teamPhotos[data.team.trim().toLowerCase()] = data.photoUrl;
+          userTeams[data.uid] = data.team.trim().toLowerCase(); // Store the team of each user
         }
       });
     }
@@ -145,8 +147,8 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        await loadTeamPhotos();
-        loadFixers(user);
+        await loadTeamPhotos();  // Load user team information and photos
+        loadFixers(user);  // Load the fixers with user information
       }
     });
 
@@ -235,12 +237,9 @@
             const key = e.currentTarget.getAttribute("data-key");
             const match = fixers.find(f => `${f.team1}__${f.team2}__${f.date}` === key);
 
-            const userTeam = user.displayName ? user.displayName.toLowerCase() : "";
-            const team1 = match.team1.toLowerCase();
-            const team2 = match.team2.toLowerCase();
-
-            // Ensure that the user is part of the match teams
-            if (userTeam !== team1 && userTeam !== team2) {
+            // Check if the user is part of either team in the match using playersform data
+            const userTeam = userTeams[user.uid]; // Get the user's team from playersform collection
+            if (userTeam !== match.team1.trim().toLowerCase() && userTeam !== match.team2.trim().toLowerCase()) {
               Swal.fire({ icon: "warning", title: "You are not part of this match!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
               return;
             }
