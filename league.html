@@ -204,7 +204,7 @@
 
         sortedDates.forEach((date, groupIndex) => {
           const groupName = String.fromCharCode(65 + groupIndex);
-          html += `<div class="text-lg font-semibold text-yellow-400 mb-2">Group ${groupName}</div>`;
+          html += `<div class="bg-yellow-500 bg-opacity-30 py-1 px-3 text-center text-lg font-semibold text-yellow-300 mb-2">Group ${groupName}</div>`;
 
           const matches = fixersByDate[date].sort((a, b) => a.team1.localeCompare(b.team1));
 
