@@ -38,76 +38,58 @@
     </div>
   </main>
 
-     <!-- Goal Update Modal -->
-<div id="goal-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
-  <div class="bg-gray-900 rounded-lg shadow-lg w-80 overflow-hidden border border-gray-700">
-
-    <!-- Title Bar -->
-    <div class="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 text-black px-4 py-2 font-semibold text-lg flex items-center justify-between header-glow" style="font-family: 'Audiowide', cursive;">
-      <span>Matches Result Update</span>
-      <button id="close-modal" class="w-8 h-8 rounded-full bg-black bg-opacity-20 text-white flex items-center justify-center text-xl hover:bg-yellow-400 hover:text-black transition">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-
-    <!-- Content -->
-    <div class="p-5">
-      
-      <!-- Rules -->
-      <div class="mb-5 flex items-center gap-3 bg-yellow-900 bg-opacity-20 rounded-lg p-1 border border-yellow-500 shadow-inner glow-yellow">
-        <i class="fa-solid fa-exclamation-triangle text-yellow-400 text-2xl"></i>
-        <p class="text-yellow-300 font-semibold text-sm" style="font-family: 'Audiowide', cursive;">
-          শর্ত প্রযোজ্য : অবশ্যই ম্যাচ শেষে যে স্কোর হবে ওই স্কোর অনুযায়ী গোল সাবমিট করতে হবে যদি ভুলভাল গোল সাবমিট করেন তাহলে আপনার অ্যাকাউন্টটি ব্যান করা হবে।
-        </p>
+  <!-- Goal Update Modal -->
+  <div id="goal-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+    <div class="bg-gray-900 rounded-lg shadow-lg w-80 overflow-hidden border border-gray-700">
+      <div class="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 text-black px-4 py-2 font-semibold text-lg flex items-center justify-between header-glow" style="font-family: 'Audiowide', cursive;">
+        <span>Matches Result Update</span>
+        <button id="close-modal" class="w-8 h-8 rounded-full bg-black bg-opacity-20 text-white flex items-center justify-center text-xl hover:bg-yellow-400 hover:text-black transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-
-      <!-- Goal input fields will be inserted dynamically via JavaScript -->
-      <div id="goal-modal-content"></div>
-    </div>
-
-    <!-- Save Button -->
-    <div class="flex justify-center px-6 pb-4">
-      <button id="save-goals" class="bg-yellow-400 text-black px-6 py-2 rounded-lg hover:bg-yellow-300 font-semibold transition">Submit Goal</button>
+      <div class="p-5">
+        <div class="mb-5 flex items-center gap-3 bg-yellow-900 bg-opacity-20 rounded-lg p-1 border border-yellow-500 shadow-inner glow-yellow">
+          <i class="fa-solid fa-exclamation-triangle text-yellow-400 text-2xl"></i>
+          <p class="text-yellow-300 font-semibold text-sm" style="font-family: 'Audiowide', cursive;">
+            শর্ত প্রযোজ্য : অবশ্যই ম্যাচ শেষে যে স্কোর হবে ওই স্কোর অনুযায়ী গোল সাবমিট করতে হবে যদি ভুলভাল গোল সাবমিট করেন তাহলে আপনার অ্যাকাউন্টটি ব্যান করা হবে।
+          </p>
+        </div>
+        <div id="goal-modal-content"></div>
+      </div>
+      <div class="flex justify-center px-6 pb-4">
+        <button id="save-goals" class="bg-yellow-400 text-black px-6 py-2 rounded-lg hover:bg-yellow-300 font-semibold transition">Submit Goal</button>
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- Bottom Nav -->
-  <nav
-    class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-40">
+  <nav class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-700 flex justify-around items-center py-2 rounded-t-2xl shadow-inner text-white h-16 sm:flex sm:justify-between sm:h-14 sm:px-2 z-40">
     <a href="dashboard.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-house text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       Home
     </a>
     <a href="match.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-gamepad text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       Matches
     </a>
     <a href="league.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-trophy text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
       League
     </a>
     <a href="rank.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-500">
         <i class="fa-solid fa-ranking-star text-lg text-gray-300 hover:text-yellow-400"></i>
       </div>
-         Ranking
-      </a>
-
+      Ranking
+    </a>
     <a href="profile.html" class="nav-item flex flex-col items-center text-xs font-semibold no-underline">
-      <div
-        class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
+      <div class="bg-gray-900 bg-opacity-70 w-9 h-9 rounded-full mb-1 flex items-center justify-center border border-gray-400">
         <i class="fa-solid fa-user text-lg text-gray-400 hover:text-yellow-400"></i>
       </div>
       Profile
@@ -169,10 +151,22 @@
       return `Date: ${day}-${month}-${year} Time: 24 Hours`;
     }
 
+    function formatBalance(amount) {
+      return (+amount.toFixed(2)).toString();
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         await loadTeamPhotos();
         loadFixers();
+
+        const userRef = doc(db, "users", user.uid);
+        onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const userBalance = docSnap.data().balance || 0;
+            document.getElementById("mainBalance").textContent = formatBalance(userBalance);
+          }
+        });
       }
     });
 
@@ -272,18 +266,14 @@
                 </div>
               </div>
             </div>
-
             `;
 
-            // Show the modal
             document.getElementById("goal-modal").classList.remove("hidden");
 
-            // Handle close modal
             document.getElementById("close-modal").addEventListener("click", () => {
               document.getElementById("goal-modal").classList.add("hidden");
             });
 
-            // Handle save goals
             document.getElementById("save-goals").addEventListener("click", async () => {
               let goal1 = document.getElementById(`goal1-modal-${key}`).value;
               let goal2 = document.getElementById(`goal2-modal-${key}`).value;
@@ -309,7 +299,6 @@
 
               Swal.fire({ icon: "success", title: "Goal updated!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
 
-              // Close the modal after saving
               document.getElementById("goal-modal").classList.add("hidden");
             });
           });
