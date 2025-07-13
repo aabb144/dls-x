@@ -288,6 +288,18 @@
               goal1 = goal1 === "" ? null : Number(goal1);
               goal2 = goal2 === "" ? null : Number(goal2);
 
+              // Get current user's UID
+              const user = auth.currentUser;
+              if (!user) return;
+
+              const userTeam = await getUserTeam(user.uid); // Fetch team from Firestore for the current user
+
+              // Check if user belongs to either of the teams
+              if (![match.team1, match.team2].includes(userTeam)) {
+                Swal.fire({ icon: "error", title: "You are not part of this match!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
+                return;
+              }
+
               if ((goal1 !== null && (isNaN(goal1) || goal1 < 0)) || (goal2 !== null && (isNaN(goal2) || goal2 < 0))) {
                 Swal.fire({ icon: "error", title: "Invalid goal value!", timer: 2000, toast: true, position: "top-end", showConfirmButton: false });
                 return;
@@ -312,6 +324,16 @@
         });
       });
     }
-  </script>
+
+    async function getUserTeam(uid) {
+      const userRef = doc(db, "users", uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        return userSnap.data().team; // Assuming 'team' field contains the user's team name
+      }
+      return null;
+    }
+</script>
+.
 </body>
 </html>
