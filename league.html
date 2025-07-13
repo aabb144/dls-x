@@ -147,20 +147,6 @@
       });
     }
 
-    function formatBalance(amount) {
-      return (+amount.toFixed(2)).toString();
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            userBalance = docSnap.data().balance || 0;
-            document.getElementById("mainBalance").textContent = formatBalance(userBalance);
-          }
-        });
-
     function addDays(dateStr, days) {
       const d = new Date(dateStr);
       d.setDate(d.getDate() + days);
