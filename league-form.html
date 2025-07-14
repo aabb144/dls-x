@@ -176,7 +176,7 @@
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         const balance = userSnap.data()?.balance || 0;
-        mainBalance.innerText = `৳ ${balance.toFixed(2)}`;
+        mainBalance.innerText = `৳ ${balance.toFixed(0)}`; // Display without decimals
       }
     });
 
