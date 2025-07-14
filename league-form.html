@@ -184,6 +184,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Check if all required fields are filled
       const team = form['team'].value.trim();
       const dlsRating = form['dls-rating'].value.trim();
       const age = form['age'].value.trim();
@@ -191,10 +192,10 @@
 
       if (!team || !dlsRating || !age || !yearsPlayed) {
         Swal.fire({
-          icon: 'error',
-          title: 'Missing Fields',
+          icon: 'warning',
+          title: 'Incomplete Form',
           text: 'Please fill in all required fields.',
-          confirmButtonColor: '#EF4444'
+          confirmButtonColor: '#F59E0B'
         });
         return;
       }
