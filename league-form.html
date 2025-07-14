@@ -38,7 +38,7 @@
 
       <!-- Current Limit Display -->
       <p id="currentLimitDisplay" class="text-center text-yellow-300 mb-2 font-medium">Loading...</p>
-      <!-- Joining Display -->
+      <!-- Joining Fee Display -->
       <p id="joiningFee" class="text-center text-yellow-300 mb-4 font-medium">Loading...</p>
 
       <form class="space-y-6" id="registration-form">
@@ -109,6 +109,7 @@
     let currentLimit = null;
 
     const currentLimitDisplay = document.getElementById('currentLimitDisplay');
+    const joiningFeeDisplay = document.getElementById('joiningFee');
     const mainBalance = document.getElementById("mainBalance");
 
     async function loadPlayerLimit() {
@@ -126,6 +127,23 @@
       } catch (error) {
         console.error("Error fetching player limit:", error);
         currentLimitDisplay.textContent = "Problem loading limit";
+      }
+    }
+
+    async function loadJoiningFee() {
+      const feeDocRef = doc(db, "settings", "joiningFee");
+      try {
+        const docSnap = await getDoc(feeDocRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const fee = data?.fee ?? "Not Set";
+          joiningFeeDisplay.textContent = `Joining Fee: ${fee}`;
+        } else {
+          joiningFeeDisplay.textContent = "Joining Fee: Not Set";
+        }
+      } catch (error) {
+        console.error("Error fetching joining fee:", error);
+        joiningFeeDisplay.textContent = "Problem loading fee";
       }
     }
 
@@ -173,6 +191,7 @@
       } else {
         currentUser = user;
         await loadPlayerLimit();
+        await loadJoiningFee();
 
         // Fetch user balance
         const userRef = doc(db, "users", user.uid);
