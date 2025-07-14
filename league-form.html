@@ -88,7 +88,7 @@
   <!-- Firebase Scripts -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, getDocs, runTransaction, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -107,6 +107,7 @@
 
     let currentUser = null;
     let currentLimit = null;
+    let joiningFee = null;
 
     const currentLimitDisplay = document.getElementById('currentLimitDisplay');
     const joiningFeeDisplay = document.getElementById('joiningFee');
@@ -136,9 +137,10 @@
         const docSnap = await getDoc(feeDocRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const fee = data?.fee ?? "Not Set";
-          joiningFeeDisplay.textContent = `Joining Fee: ৳${fee}`;
+          joiningFee = data?.fee ?? 0;
+          joiningFeeDisplay.textContent = `Joining Fee: ৳${joiningFee}`;
         } else {
+          joiningFee = 0;
           joiningFeeDisplay.textContent = "Joining Fee: Not Set";
         }
       } catch (error) {
@@ -179,10 +181,11 @@
         const userData = docSnap.data();
         return {
           username: userData.username,
-          photoUrl: userData.photoUrl
+          photoUrl: userData.photoUrl,
+          balance: userData.balance || 0
         };
       }
-      return { username: "", photoUrl: "" };
+      return { username: "", photoUrl: "", balance: 0 };
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -267,7 +270,18 @@
       }
 
       // Get user info
-      const { username, photoUrl } = await getUserInfo(currentUser.uid);
+      const { username, photoUrl, balance } = await getUserInfo(currentUser.uid);
+
+      // Check if user has enough balance
+      if (balance < joiningFee) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Insufficient Balance',
+          text: `You do not have enough balance to join. Your current balance is ৳${balance.toFixed(0)}`,
+          confirmButtonColor: '#EF4444'
+        });
+        return;
+      }
 
       try {
         // Run transaction to add player and decrement limit atomically
@@ -303,6 +317,11 @@
           // Decrement maxPlayers by 1
           transaction.update(limitDocRef, {
             maxPlayers: maxPlayers - 1
+          });
+
+          // Deduct joining fee from user balance
+          transaction.update(doc(db, "users", currentUser.uid), {
+            balance: balance - joiningFee
           });
 
           // Update local currentLimit to reflect new value
