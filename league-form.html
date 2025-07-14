@@ -137,7 +137,7 @@
         if (docSnap.exists()) {
           const data = docSnap.data();
           const fee = data?.fee ?? "Not Set";
-          joiningFeeDisplay.textContent = `Joining Fee: ${fee}`;
+          joiningFeeDisplay.textContent = `Joining Fee: ৳${fee}`;
         } else {
           joiningFeeDisplay.textContent = "Joining Fee: Not Set";
         }
