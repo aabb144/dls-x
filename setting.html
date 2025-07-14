@@ -37,6 +37,20 @@
     </button>
 
     <p id="currentBonusDisplay" class="text-center text-sm text-gray-600 mt-4">Current Bonus: Loading...</p>
+
+    <!-- Joining Fee Section -->
+    <h2 class="text-xl font-semibold text-blue-700 mt-6 mb-4 text-center">Joining Fee</h2>
+    <div class="flex items-center gap-4 mb-4">
+      <input type="number" id="joiningFeeInput" min="0" placeholder="Set Joining Fee"
+        class="border border-gray-300 rounded px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div>
+    
+    <button id="updateFeeBtn"
+      class="bg-red-600 hover:bg-red-700 text-white w-full py-2 rounded transition font-semibold">
+      Update Joining Fee
+    </button>
+
+    <p id="currentFeeDisplay" class="text-center text-sm text-gray-600 mt-4">Current Fee: Loading...</p>
   </div>
 
   <script type="module">
@@ -59,7 +73,8 @@
     const auth = getAuth(app);
 
     const limitDocRef = doc(db, "settings", "limits");
-    const bonusDocRef = doc(db, "settings", "signupBonus"); // New document reference for signup bonus
+    const bonusDocRef = doc(db, "settings", "signupBonus");
+    const feeDocRef = doc(db, "settings", "joiningFee"); // New document reference for joining fee
 
     const playerLimitInput = document.getElementById("playerLimitInput");
     const updateLimitBtn = document.getElementById("updateLimitBtn");
@@ -68,6 +83,10 @@
     const signupBonusInput = document.getElementById("signupBonusInput");
     const updateBonusBtn = document.getElementById("updateBonusBtn");
     const currentBonusDisplay = document.getElementById("currentBonusDisplay");
+
+    const joiningFeeInput = document.getElementById("joiningFeeInput");
+    const updateFeeBtn = document.getElementById("updateFeeBtn");
+    const currentFeeDisplay = document.getElementById("currentFeeDisplay");
 
     // Load current player limit
     function loadPlayerLimit() {
@@ -104,6 +123,25 @@
         .catch((err) => {
           console.error("Failed to fetch signup bonus:", err);
           currentBonusDisplay.textContent = "Error loading bonus";
+        });
+    }
+
+    // Load current joining fee
+    function loadJoiningFee() {
+      getDoc(feeDocRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            const currentFee = data?.fee ?? "Not Set";
+            currentFeeDisplay.textContent = `Current Fee: ${currentFee}`;
+            joiningFeeInput.value = currentFee;
+          } else {
+            currentFeeDisplay.textContent = "Current Fee: Not Set";
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch joining fee:", err);
+          currentFeeDisplay.textContent = "Error loading fee";
         });
     }
 
@@ -147,6 +185,26 @@
       }
     });
 
+    // Update joining fee
+    updateFeeBtn.addEventListener("click", async () => {
+      const newFee = parseFloat(joiningFeeInput.value);
+      if (isNaN(newFee) || newFee < 0) {
+        alert("Please enter a valid joining fee.");
+        return;
+      }
+
+      try {
+        await updateDoc(feeDocRef, {
+          fee: newFee,
+        });
+        currentFeeDisplay.textContent = `Current Fee: ${newFee}`;
+        alert("Joining fee updated successfully.");
+      } catch (err) {
+        console.error("Failed to update joining fee:", err);
+        alert("Failed to update fee.");
+      }
+    });
+
     // ✅ Auth Check before accessing Firestore
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -154,7 +212,8 @@
         window.location.href = "login.html";
       } else {
         loadPlayerLimit();
-        loadSignupBonus(); // Load signup bonus data on successful login
+        loadSignupBonus();
+        loadJoiningFee(); // Load joining fee data on successful login
       }
     });
   </script>
