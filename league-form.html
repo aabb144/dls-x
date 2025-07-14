@@ -142,14 +142,14 @@
       const playersCol = collection(db, "playersform");
       const q = query(playersCol, where("uid", "==", uid));
       const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the user is already registered
+      return snapshot.size > 0;
     }
 
     async function checkTeamNameExistence(teamName) {
       const playersCol = collection(db, "playersform");
       const q = query(playersCol, where("team", "==", teamName));
       const snapshot = await getDocs(q);
-      return snapshot.size > 0; // returns true if the team name is already taken
+      return snapshot.size > 0;
     }
 
     async function getUserInfo(uid) {
@@ -318,4 +318,5 @@
   </script>
 
 </body>
+
 </html>
