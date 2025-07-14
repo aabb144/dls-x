@@ -44,7 +44,7 @@
         <input type="number" step="any" id="dls-rating" name="dls-rating" required placeholder="Enter your DLS rating" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
         <input type="number" id="age" name="age" required placeholder="Enter your age" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
         <input type="number" id="years-played" name="years-played" required placeholder="How many years have you played DLS" class="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300">Join Now</button>
+        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-md transition duration-300" onclick="validateForm(event)">Join Now</button>
       </form>
     </div>
   </main>
@@ -179,6 +179,25 @@
         mainBalance.innerText = `${balance.toFixed(0)}`; // Display without decimals
       }
     });
+
+    function validateForm(event) {
+      const form = document.getElementById('registration-form');
+      const team = form['team'].value.trim();
+      const dlsRating = form['dls-rating'].value.trim();
+      const age = form['age'].value.trim();
+      const yearsPlayed = form['years-played'].value.trim();
+
+      if (!team || !dlsRating || !age || !yearsPlayed) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Missing Fields',
+          text: 'Please fill in all required fields.',
+          confirmButtonColor: '#EF4444'
+        });
+        event.preventDefault();
+        return;
+      }
+    }
 
     const form = document.getElementById('registration-form');
     form.addEventListener('submit', async (e) => {
