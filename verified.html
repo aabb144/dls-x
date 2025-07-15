@@ -25,19 +25,19 @@
     <h2 class="text-md font-semibold text-white mb-6">Upload a photo to verify your account</h2>
     <p class="text-sm text-gray-400 mb-4">This helps ensure the security of your account. Once uploaded, you'll gain access to all the benefits of a verified account.</p>
     
-    <p class="text-xs text-gray-400 mb-4">To upload your photo, please visit <a href="https://postimages.org/" target="_blank" class="text-blue-500 underline">PostImages</a>, copy the URL, and then verify (make sure to copy the Direct link).</p>
+    <p class="text-xs text-gray-400 mb-4">To upload your photo, please visit <a href="https://postimages.org/" target="_blank" class="text-yellow-300 underline">PostImages</a>, copy the URL, and then verify (make sure to copy the Direct link).</p>
 
     <form id="verificationForm" onsubmit="uploadPhoto(event)">
       <div class="mb-4">
-        <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
-        <input type="url" id="photoUrl" required placeholder="Enter image URL"
+        <label for="address" class="block text-sm font-medium text-gray-300 mb-1">Address</label>
+        <input type="text" id="address" required placeholder="Enter your address"
           class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
       </div>
 
-      <!-- Address Input -->
+      
       <div class="mb-4">
-        <label for="address" class="block text-sm font-medium text-gray-300 mb-1">Address</label>
-        <input type="text" id="address" required placeholder="Enter your address"
+        <label for="photoUrl" class="block text-sm font-medium text-gray-300 mb-1">Profile Photo URL</label>
+        <input type="url" id="photoUrl" required placeholder="Enter image URL"
           class="w-full px-4 py-2 border border-gray-600 rounded-sm outline-none text-white bg-gray-800 text-sm"/>
       </div>
 
